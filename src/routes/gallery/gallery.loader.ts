@@ -1,6 +1,6 @@
 import {store} from "@/store";
-import { REQUEST_STATUS } from '@/types/request';
-import {fetchBreeds} from "@/features/breeds/breedThunks";
+import { REQUEST_STATUS } from '@/types/request.ts';
+import {fetchBreeds} from "@/features/breeds/breedThunks.ts";
 
 export const galleryLoader = async () => {
   const state = store.getState();
