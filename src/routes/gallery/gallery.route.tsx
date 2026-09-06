@@ -1,26 +1,37 @@
+import {GalleryLayout} from "@/components/layout/GalleryLayout";
 import {ROUTES} from "@/constants/routes";
-import {GalleryPage} from "@/pages/GalleryPage";
 import {GalleryErrorBoundary} from "@/routes/gallery/gallery.error";
 import {galleryLoader} from "@/routes/gallery/gallery.loader";
 import type {RouteObject} from "react-router";
 
-export const galleryRoute: RouteObject[] = [
+export const galleryRoute: RouteObject =
   {
-    path:ROUTES.GALLERY,
-    element:<GalleryPage />,
+    path: ROUTES.GALLERY,
+    id: 'gallery',
     loader: galleryLoader,
-    errorElement: <GalleryErrorBoundary />,
-  },
-  {
-    path:ROUTES.GALLERY_BREED,
-    element:<GalleryPage />,
-    loader: galleryLoader,
-    errorElement: <GalleryErrorBoundary />,
-  },
-  {
-    path:ROUTES.GALLERY_GRID,
-    element:<GalleryPage />,
-    loader: galleryLoader,
-    errorElement: <GalleryErrorBoundary />,
-  },
-]
+    errorElement: <GalleryErrorBoundary/>,
+    element: <GalleryLayout/>,
+    children: [
+      {
+        path: ROUTES.GALLERY,
+        lazy: async () => {
+          const { GalleryPage } = await import("@/pages/GalleryPage");
+          return { Component: GalleryPage };
+        },
+      },
+      {
+        path: ROUTES.GALLERY_BREED,
+        lazy: async () => {
+          const { GalleryPage } = await import("@/pages/GalleryPage");
+          return { Component: GalleryPage };
+        },
+      },
+      {
+        path: ROUTES.GALLERY_GRID,
+        lazy: async () => {
+          const { GalleryPage } = await import("@/pages/GalleryPage");
+          return { Component: GalleryPage };
+        },
+      },
+    ]
+  };
