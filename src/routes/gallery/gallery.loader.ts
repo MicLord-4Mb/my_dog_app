@@ -1,6 +1,21 @@
+import {loadBreedsAsync} from "@/features/breeds/loadBreeds";
 import {store} from "@/store";
+import type {DogBreed} from "@/types/dog";
 import { REQUEST_STATUS } from '@/types/request.ts';
 import {fetchBreeds} from "@/features/breeds/breedThunks.ts";
+
+/**
+ * Alternative galleryLoader
+ */
+export interface NewGalleryLoaderData {
+  breeds: Promise<DogBreed[]>;
+}
+
+export const newGalleryLoader = (): NewGalleryLoaderData => {
+  return {
+    breeds: loadBreedsAsync(),
+  }
+}
 
 export const galleryLoader = async () => {
   const state = store.getState();

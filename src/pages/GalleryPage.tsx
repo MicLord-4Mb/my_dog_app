@@ -74,12 +74,13 @@ export const GalleryPage: React.FC = () => {
   });
 
   return (
-    <div className={STYLES.container}>
-      {/* Ambient background glow decoration */}
-      <div className={STYLES.ambientWrapper}>
-        <div className={STYLES.ambientGlowPrimary} />
-        <div className={STYLES.ambientGlowTertiary} />
-      </div>
+    <>
+     {/*<div className={STYLES.container}>*/}
+     {/*  /!* Ambient background glow decoration *!/*/}
+     {/* <div className={STYLES.ambientWrapper}>*/}
+     {/*   <div className={STYLES.ambientGlowPrimary} />*/}
+     {/*   <div className={STYLES.ambientGlowTertiary} />*/}
+     {/*</div>*/}
 
       {/* Main Content States */}
       {/*{(request.status === REQUEST_STATUS.LOADING && !isRefreshing) && <GalleryLoading />}*/}
@@ -129,6 +130,7 @@ export const GalleryPage: React.FC = () => {
         </div>
       )}
       {/*</>*/}
-    </div>
+    {/*</div>*/}
+    </>
   );
 };
