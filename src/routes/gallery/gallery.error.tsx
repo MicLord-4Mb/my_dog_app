@@ -17,7 +17,7 @@ export const GalleryErrorBoundary = () => {
   }
 
   const handleRetry = async () => {
-    dispatch(fetchBreeds());
+    await dispatch(fetchBreeds());
     navigate('.', { replace: true });
   };
 
