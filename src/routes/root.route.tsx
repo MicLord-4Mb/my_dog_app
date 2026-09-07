@@ -1,3 +1,4 @@
+import {favoritesRoute} from "@/routes/favorites/favorites.route";
 import { galleryRoute } from "@/routes/gallery/gallery.route";
 import { homeRoute } from "@/routes/home/home.route";
 import type { RouteObject } from "react-router";
@@ -18,6 +19,7 @@ export const rootRoute:RouteObject = {
   children: [
     homeRoute,
     galleryRoute,
+    favoritesRoute,
     notFoundRoute,
   ],
 }
