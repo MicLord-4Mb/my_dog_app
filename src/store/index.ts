@@ -1,3 +1,5 @@
+import {favoritesReducer} from "@/features/favorites/favoritesReducer";
+import type {FavoriteActionsTypes} from "@/features/favorites/favoritesType";
 import { legacy_createStore, combineReducers, applyMiddleware } from 'redux';
 import { thunk } from 'redux-thunk';
 import type { ThunkDispatch } from 'redux-thunk';
@@ -10,6 +12,7 @@ import type { BreedActionTypes } from '@/features/breeds/breedActionTypes';
  */
 const rootReducer = combineReducers({
   breeds: breedReducer,
+  favorites: favoritesReducer,
 });
 
 /**
@@ -30,6 +33,6 @@ export const store = legacy_createStore(
 
 /** Root Redux state type */
 export type RootState = ReturnType<typeof store.getState>;
-
+type AppActionsTypes = BreedActionTypes | FavoriteActionsTypes
 /** Typed dispatch with Thunk support */
-export type AppDispatch = ThunkDispatch<RootState, unknown, BreedActionTypes>;
+export type AppDispatch = ThunkDispatch<RootState, unknown, AppActionsTypes>;
