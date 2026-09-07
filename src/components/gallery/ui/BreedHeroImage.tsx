@@ -73,8 +73,8 @@ interface BreedHeroImageProps extends VariantProps<typeof heroImageVariants> {
   onImageError: () => void;
   onLightboxOpen: () => void;
   onToggleFitMode: () => void;
-  isBookmarked: boolean;
-  onToggleBookmark: () => void;
+  isInFavorites: boolean;
+  onToggleFavorite: () => void;
   onPrev?: () => void;
   onNext?: () => void;
   prevBreedName?: string;
@@ -92,8 +92,8 @@ export const BreedHeroImage: React.FC<BreedHeroImageProps> = ({
   onLightboxOpen,
   fitMode,
   onToggleFitMode,
-  isBookmarked,
-  onToggleBookmark,
+  isInFavorites,
+  onToggleFavorite,
   onPrev,
   onNext,
   prevBreedName,
@@ -206,14 +206,14 @@ export const BreedHeroImage: React.FC<BreedHeroImageProps> = ({
           size="icon"
           aria-label="Save to favorites"
           title="Save to favorites"
-          onClick={onToggleBookmark}
-          className={cn(actionButtonVariants({ variant: isBookmarked ? 'active' : 'ghost' }))}
+          onClick={onToggleFavorite}
+          className={cn(actionButtonVariants({ variant: isInFavorites ? 'active' : 'ghost' }))}
         >
           <span
             className={STYLES.bookmarkIcon}
-            style={{ fontVariationSettings: isBookmarked ? "'FILL' 1" : "'FILL' 0" }}
+            style={{ fontVariationSettings: isInFavorites ? "'FILL' 1" : "'FILL' 0" }}
           >
-            bookmark
+            favorite
           </span>
         </Button>
       </div>

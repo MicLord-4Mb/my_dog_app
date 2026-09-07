@@ -50,7 +50,7 @@ export const Footer: React.FC = () => {
           </nav>
 
           <p className={STYLES.copyright}>
-            © {new Date().getFullYear()} Dog Gallery. Built with Redux & TheDogAPI.
+            © {new Date().getFullYear()} Dog Gallery. Built with React Router, Redux & TheDogAPI.
           </p>
         </div>
       </div>
