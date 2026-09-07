@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectBreed } from '@/features/breeds/breedActions';
 import type { DogBreed } from '@/types/dog';
 import { selectBreedsByGroup } from '@/features/breeds/breedSelectors';
-import { buildBreedPath } from '@/constants/routes';
+import {LINKS} from '@/constants/routes';
 import { useGalleryFilters } from '@/features/breeds/hooks/useGalleryFilters';
 
 /**
@@ -63,7 +63,7 @@ export function useBreedNavigation({ currentBreed, isLightboxOpen = false }: Use
   const handleNavigateBreed = useCallback((targetBreed: DogBreed | null) => {
     if (!targetBreed) return;
     dispatch(selectBreed(targetBreed.id));
-    navigate(buildBreedPath(targetBreed.id, activeGroup));
+    navigate(LINKS.breed(targetBreed.id, activeGroup));
   }, [dispatch, navigate, activeGroup]);
 
   // Global keyboard arrow listener
