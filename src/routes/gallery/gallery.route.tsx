@@ -1,5 +1,5 @@
 import {GalleryLayout} from "@/components/layout/GalleryLayout";
-import {ROUTES} from "@/constants/routes";
+import {ROUTES,LINKS} from "@/constants/routes";
 import {GalleryErrorBoundary} from "@/routes/gallery/gallery.error";
 import {galleryLoader} from "@/routes/gallery/gallery.loader";
 import type {RouteObject} from "react-router";

@@ -13,7 +13,7 @@ import { SearchFilterBar } from '@/components/gallery/ui/SearchFilterBar';
 import { GroupFilterChips } from '@/components/gallery/ui/GroupFilterChips';
 import { useGalleryFilters } from '@/features/breeds/hooks/useGalleryFilters';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
-import { buildBreedPath } from '@/constants/routes';
+import { LINKS } from '@/constants/routes';
 
 /** Number of items rendered per page on desktop and loaded per batch on mobile */
 const PAGE_SIZE = 8;
@@ -182,7 +182,7 @@ export const BreedGrid = () => {
                 <BreedCompactCard
                   key={breed.id}
                   breed={breed}
-                  to={buildBreedPath(breed.id, activeGroup)}
+                  to={LINKS.breed(breed.id, activeGroup)}
                 />
               ))}
             </section>
@@ -203,7 +203,7 @@ export const BreedGrid = () => {
                 <BreedCompactCard
                   key={breed.id}
                   breed={breed}
-                  to={buildBreedPath(breed.id, activeGroup)}
+                  to={LINKS.breed(breed.id, activeGroup)}
                 />
               ))}
             </section>
