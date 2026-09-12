@@ -12,7 +12,7 @@ export const favoritesSlice = createSlice({
   name: 'favorites',
   initialState,
   reducers: {
-    toggleFavorites: (state, action: PayloadAction<string>) => {
+    toggleFavorite: (state, action: PayloadAction<string>) => {
       const breedId = action.payload;
       const index = state.favoritesIds.indexOf(breedId);
 
@@ -25,5 +25,5 @@ export const favoritesSlice = createSlice({
   },
 });
 
-export const { toggleFavorites } = favoritesSlice.actions;
+export const { toggleFavorite } = favoritesSlice.actions;
 export default favoritesSlice.reducer;

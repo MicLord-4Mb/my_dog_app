@@ -1,22 +1,9 @@
-import type { FavoritesState } from "@/features/favorites/favoritesType";
-
-/**
- * State contract interface representing slices containing the `favorites` domain.
- */
-export interface HasFavoritesState {
-  favorites: FavoritesState;
-}
-
-/**
- * RTK Migration Note:
- * When migrating to Redux Toolkit (RTK), this domain will be converted to a `createSlice({ name: 'favorites', ... })`.
- * The selectors below remain 100% compatible with the RTK slice structure.
- */
+import type { RootState } from "@/store";
 
 /**
  * Selector extracting array of favorited breed IDs.
  */
-export const selectFavoritesIds = (state: HasFavoritesState): string[] =>
+export const selectFavoritesIds = (state: RootState) =>
   state.favorites.favoritesIds;
 
 /**
@@ -26,11 +13,11 @@ export const selectFavoritesIds = (state: HasFavoritesState): string[] =>
  */
 export const selectIsBreedInFavorites =
   (breedId: string) =>
-  (state: HasFavoritesState): boolean =>
+  (state: RootState): boolean =>
     state.favorites.favoritesIds.includes(breedId);
 
 /**
  * Selector computing total count of favorited breeds.
  */
-export const selectFavoritesCount = (state: HasFavoritesState): number =>
+export const selectFavoritesCount = (state: RootState): number =>
   state.favorites.favoritesIds.length;
