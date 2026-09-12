@@ -1,6 +1,8 @@
 import { createSelector } from 'reselect';
 import type { RootState } from '@/store';
 import type { DogBreed } from '@/types/dog';
+import { FAVORITES_GROUP_KEY } from '@/constants/routes';
+import { selectFavoritesIds } from '@/features/favorites/favoritesSelectors';
 
 /**
  * Base root slice selector for breeds state.
@@ -97,11 +99,26 @@ export const isBreedInGroup = (breed: DogBreed, group?: string | null): boolean 
 
 /**
  * Memoized selector: Filters all breeds array by active breed group.
+ * Supports FAVORITES_GROUP_KEY ('favorites') to return favorite breeds.
  */
+// export const selectBreedsByGroup = createSelector(
+//   [selectAllBreedsArray, (_state: RootState, group?: string | null) => group],
+//   (breeds, group) => {
+//     if (!group || group.toLowerCase() === 'all') return breeds;
+//     return breeds.filter((b) => isBreedInGroup(b, group));
+//   }
+// );
 export const selectBreedsByGroup = createSelector(
-  [selectAllBreedsArray, (_state: RootState, group?: string | null) => group],
-  (breeds, group) => {
+  [
+    selectAllBreedsArray,
+    selectFavoritesIds,
+    (_state: RootState, group?: string | null) => group,
+  ],
+  (breeds, favoritesIds, group) => {
     if (!group || group.toLowerCase() === 'all') return breeds;
+    if (group === FAVORITES_GROUP_KEY) {
+      return breeds.filter((b) => favoritesIds.includes(b.id));
+    }
     return breeds.filter((b) => isBreedInGroup(b, group));
   }
 );
