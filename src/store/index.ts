@@ -1,38 +1,13 @@
+import breedReducer from "@/features/breeds/breedReducer";
 import {favoritesReducer} from "@/features/favorites/favoritesReducer";
-import type {FavoriteActionsTypes} from "@/features/favorites/favoritesType";
-import { legacy_createStore, combineReducers, applyMiddleware } from 'redux';
-import { thunk } from 'redux-thunk';
-import type { ThunkDispatch } from 'redux-thunk';
-import { createLogger } from 'redux-logger';
-import breedReducer from '@/features/breeds/breedReducer';
-import type { BreedActionTypes } from '@/features/breeds/breedActionTypes';
+import {configureStore} from "@reduxjs/toolkit";
 
-/**
- * Root Redux reducer combining application feature slices.
- */
-const rootReducer = combineReducers({
-  breeds: breedReducer,
-  favorites: favoritesReducer,
+export const store = configureStore({
+  reducer: {
+    breeds: breedReducer,
+    favorites: favoritesReducer,
+  },
 });
 
-/**
- * Action logger for browser console debugging.
- */
-const logger = createLogger({
-  collapsed: true,
-});
-
-/**
- * Global Redux Store instance configured with Thunk and Redux Logger middleware.
- */
-export const store = legacy_createStore(
-  rootReducer,
-  undefined,
-  applyMiddleware(thunk, logger)
-);
-
-/** Root Redux state type */
 export type RootState = ReturnType<typeof store.getState>;
-type AppActionsTypes = BreedActionTypes | FavoriteActionsTypes
-/** Typed dispatch with Thunk support */
-export type AppDispatch = ThunkDispatch<RootState, unknown, AppActionsTypes>;
+export type AppDispatch = typeof store.dispatch;
