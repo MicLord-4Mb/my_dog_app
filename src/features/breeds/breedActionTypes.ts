@@ -15,8 +15,6 @@ export const BREED_ACTION_TYPES = {
   SELECT_BREED: 'breeds/selectBreed',
   /** Auto-select first breed in the provided group */
   AUTOSELECT_FIRST_IN_GROUP: 'breeds/autoselectFirstInGroup',
-  /** Reset request error state */
-  CLEAR_ERROR: 'breeds/clearError',
 } as const;
 
 export type BreedActionType = (typeof BREED_ACTION_TYPES)[keyof typeof BREED_ACTION_TYPES];
@@ -47,10 +45,6 @@ export interface AutoselectFirstInGroupAction {
   payload: string | null;
 }
 
-export interface ClearErrorAction {
-  type: typeof BREED_ACTION_TYPES.CLEAR_ERROR;
-}
-
 /**
  * Discriminated union of all possible action objects for breeds slice.
  */
@@ -59,5 +53,4 @@ export type BreedActionTypes =
   | FetchBreedsFulfilledAction
   | FetchBreedsRejectedAction
   | SelectBreedAction
-  | AutoselectFirstInGroupAction
-  | ClearErrorAction;
+  | AutoselectFirstInGroupAction;

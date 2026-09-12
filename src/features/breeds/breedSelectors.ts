@@ -5,19 +5,10 @@ import { FAVORITES_GROUP_KEY } from '@/constants/routes';
 import { selectFavoritesIds } from '@/features/favorites/favoritesSelectors';
 
 /**
- * Base root slice selector for breeds state.
- */
-export const selectBreedsState = (state: RootState) => state.breeds;
-
-/**
- * Selector for async request lifecycle state (status, data, error).
- */
-export const selectBreedsRequest = (state: RootState) => state.breeds.request;
-
-/**
  * Selector for currently selected breed ID.
  */
-export const selectSelectedBreedId = (state: RootState) => state.breeds.selectedBreedId;
+export const selectSelectedBreedId = (state: RootState): string | null =>
+  state.breeds.selectedBreedId;
 
 // Referential constants to prevent reselect cache invalidation when request.data is null
 const EMPTY_ENTITIES: Record<string, DogBreed> = {};
@@ -26,19 +17,21 @@ const EMPTY_IDS: string[] = [];
 /**
  * Selector extracting normalized dictionary entities from store.
  */
-export const selectBreedEntities = (state: RootState) => state.breeds.request.data?.entities || EMPTY_ENTITIES;
+export const selectBreedEntities = (state: RootState): Record<string, DogBreed> =>
+  state.breeds.request.data?.entities || EMPTY_ENTITIES;
 
 /**
  * Selector extracting ordered array of breed IDs from store.
  */
-export const selectBreedIds = (state: RootState) => state.breeds.request.data?.ids || EMPTY_IDS;
+export const selectBreedIds = (state: RootState): string[] =>
+  state.breeds.request.data?.ids || EMPTY_IDS;
 
 /**
  * Memoized selector: Reconstructs array of all breed objects from normalized entities and ids.
  */
 export const selectAllBreedsArray = createSelector(
   [selectBreedEntities, selectBreedIds],
-  (entities, ids) => ids.map(id => entities[id])
+  (entities, ids) => ids.map((id) => entities[id])
 );
 
 /**
@@ -53,31 +46,31 @@ export const selectCurrentBreed = createSelector(
 );
 
 /**
- * Memoized selector: Computes sorted array of unique breed group names available in the catalog.
+ * Memoized selector: Extracts sorted list of unique breed groups present in the data.
  */
 export const selectUniqueBreedGroups = createSelector(
   [selectAllBreedsArray],
   (breeds) => {
     const groups = new Set<string>();
-    breeds.forEach((b) => {
-      if (b.breedGroup && b.breedGroup.trim().length > 0) {
-        groups.add(b.breedGroup.trim());
+    breeds.forEach((breed) => {
+      if (breed.breedGroup && breed.breedGroup.trim()) {
+        groups.add(breed.breedGroup.trim());
       }
     });
-    return Array.from(groups).sort();
+    return Array.from(groups).sort((a, b) => a.localeCompare(b));
   }
 );
 
 /**
- * Memoized selector: Computes map of breed group names to count of breeds in each group.
+ * Memoized selector: Computes count of breeds belonging to each unique breed group.
  */
 export const selectBreedGroupCounts = createSelector(
   [selectAllBreedsArray],
-  (breeds) => {
+  (breeds): Record<string, number> => {
     const counts: Record<string, number> = {};
-    breeds.forEach((b) => {
-      if (b.breedGroup && b.breedGroup.trim().length > 0) {
-        const group = b.breedGroup.trim();
+    breeds.forEach((breed) => {
+      const group = breed.breedGroup?.trim();
+      if (group) {
         counts[group] = (counts[group] || 0) + 1;
       }
     });
@@ -86,7 +79,8 @@ export const selectBreedGroupCounts = createSelector(
 );
 
 /**
- * Helper predicate checking if a breed belongs to a specified breed group.
+ * Pure predicate checking whether a breed belongs to a specific group category.
+ * Case-insensitive comparison with fallback to true for 'all' or empty filter.
  * 
  * @param breed - DogBreed domain entity.
  * @param group - Target breed group name or null/undefined for any group.
@@ -101,13 +95,6 @@ export const isBreedInGroup = (breed: DogBreed, group?: string | null): boolean 
  * Memoized selector: Filters all breeds array by active breed group.
  * Supports FAVORITES_GROUP_KEY ('favorites') to return favorite breeds.
  */
-// export const selectBreedsByGroup = createSelector(
-//   [selectAllBreedsArray, (_state: RootState, group?: string | null) => group],
-//   (breeds, group) => {
-//     if (!group || group.toLowerCase() === 'all') return breeds;
-//     return breeds.filter((b) => isBreedInGroup(b, group));
-//   }
-// );
 export const selectBreedsByGroup = createSelector(
   [
     selectAllBreedsArray,
@@ -122,4 +109,3 @@ export const selectBreedsByGroup = createSelector(
     return breeds.filter((b) => isBreedInGroup(b, group));
   }
 );
-

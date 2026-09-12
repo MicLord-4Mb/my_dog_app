@@ -48,8 +48,6 @@ export interface NormalizedData<T> {
 export interface BreedsState {
   /** Async request lifecycle state containing normalized entities */
   request: RequestState<NormalizedData<DogBreed>>;
-  /** Indicates if a background refresh is happening while data is kept */
-  isRefreshing: boolean;
   /** Active selected breed ID */
   selectedBreedId: string | null;
 }

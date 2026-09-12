@@ -10,7 +10,7 @@ import { useSyncExternalStore } from 'react';
  * 
  * @example
  * const isDesktop = useMediaQuery('(min-width: 768px)');
- * 
+ *
  */
 export function useMediaQuery(query: string): boolean {
   const subscribe = (onStoreChange: () => void) => {

@@ -53,11 +53,6 @@ export const galleryIndexLoader: LoaderFunction = async ({ request }) => {
   const url = new URL(request.url);
   const group = url.searchParams.get('group') || 'all';
   await galleryLoader();
-
-  // const firstBreed = (group.toLowerCase() !== 'all')
-  //   ? (breeds.find((b) => b.breedGroup?.toLowerCase() === group.toLowerCase()) || breeds[0])
-  //   : breeds[0];
-
   const groupBreeds = selectBreedsByGroup(store.getState(), group);
   const firstBreed = groupBreeds[0];
 

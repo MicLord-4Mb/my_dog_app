@@ -15,7 +15,6 @@ export const initialState: BreedsState = {
     data: null,
     error: null,
   },
-  isRefreshing: false,
   selectedBreedId: null,
 };
 
@@ -26,14 +25,10 @@ export function breedReducer(
   state: BreedsState = initialState,
   action: BreedActionTypes
 ): BreedsState {
-
   switch (action.type) {
     case BREED_ACTION_TYPES.FETCH_PENDING:
       if (state.request.data) {
-        return {
-          ...state,
-          isRefreshing: true,
-        };
+        return state;
       }
       return {
         ...state,
@@ -50,7 +45,7 @@ export function breedReducer(
       const entities: Record<string, DogBreed> = {};
       const ids: string[] = [];
 
-      items.forEach(breed => {
+      items.forEach((breed) => {
         const idStr = breed.id;
         entities[idStr] = breed;
         ids.push(idStr);
@@ -66,7 +61,6 @@ export function breedReducer(
 
       return {
         ...state,
-        isRefreshing: false,
         request: {
           status: REQUEST_STATUS.SUCCESS,
           data: normalizedData,
@@ -79,7 +73,6 @@ export function breedReducer(
     case BREED_ACTION_TYPES.FETCH_REJECTED:
       return {
         ...state,
-        isRefreshing: false,
         request: {
           status: REQUEST_STATUS.ERROR,
           data: null,
@@ -99,24 +92,14 @@ export function breedReducer(
       if (!data) return state;
 
       const matchingBreed = data.ids
-        .map(id => data.entities[id])
-        .find(breed => isBreedInGroup(breed, group));
+        .map((id) => data.entities[id])
+        .find((breed) => isBreedInGroup(breed, group));
 
       return {
         ...state,
         selectedBreedId: matchingBreed ? matchingBreed.id : state.selectedBreedId,
       };
     }
-
-    case BREED_ACTION_TYPES.CLEAR_ERROR:
-      return {
-        ...state,
-        request: {
-          status: REQUEST_STATUS.IDLE,
-          data: null,
-          error: null,
-        },
-      };
 
     default:
       return state;

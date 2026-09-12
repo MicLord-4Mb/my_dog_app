@@ -2,7 +2,6 @@ import {
   BREED_ACTION_TYPES,
   type SelectBreedAction,
   type AutoselectFirstInGroupAction,
-  type ClearErrorAction,
   type FetchBreedsPendingAction,
   type FetchBreedsFulfilledAction,
   type FetchBreedsRejectedAction,
@@ -28,13 +27,6 @@ export const selectBreed = (id: string | null): SelectBreedAction => ({
 export const autoselectFirstInGroup = (group: string | null): AutoselectFirstInGroupAction => ({
   type: BREED_ACTION_TYPES.AUTOSELECT_FIRST_IN_GROUP,
   payload: group,
-});
-
-/**
- * Action creator to clear API request error state.
- */
-export const clearError = (): ClearErrorAction => ({
-  type: BREED_ACTION_TYPES.CLEAR_ERROR,
 });
 
 /**
