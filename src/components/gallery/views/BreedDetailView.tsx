@@ -1,14 +1,8 @@
-import React, { useMemo } from 'react';
-import { useParams } from 'react-router';
-import { useAppSelector } from '@/store/hooks';
-import { selectAllBreedsArray, selectCurrentBreed, selectBreedEntities } from '@/features/breeds/breedSelectors';
-import { selectFavoritesIds } from '@/features/favorites/favoritesSelectors';
-import { FAVORITES_GROUP_KEY } from '@/constants/routes';
+import React from 'react';
 import { BreedSelect } from '@/components/gallery/filters/BreedSelect';
 import { BreedCard } from '@/components/gallery/cards/BreedCard';
 import { GalleryEmpty } from '@/components/gallery/views/GalleryEmpty';
-import { useBreedNavigation } from '@/features/breeds/hooks/useBreedNavigation';
-import { useGalleryFilters } from '@/features/breeds/hooks/useGalleryFilters';
+import { useBreedDetailController } from '@/features/breeds/hooks/useBreedDetailController';
 
 const STYLES = {
   mainLayout: "flex flex-col gap-6",
@@ -22,40 +16,19 @@ const STYLES = {
  * Single Breed Detail View component.
  * Displays interactive breed sidebar/combobox and detailed breed showcase card.
  * Mounted on `/gallery` (defaulting to first breed) and `/gallery/breed/:id`.
- *
- * Reads breed data from the Redux store (populated by the gallery route loader).
+ * 
+ * Refactored: Fully delegates state management, route params resolution,
+ * and keyboard navigation to `useBreedDetailController`.
  */
 export const BreedDetailView: React.FC = () => {
-  const { id } = useParams<{ id?: string }>();
-
-  const allBreeds = useAppSelector(selectAllBreedsArray);
-  const breedEntities = useAppSelector(selectBreedEntities);
-  const selectedBreedFromState = useAppSelector(selectCurrentBreed);
-  const favoritesIds = useAppSelector(selectFavoritesIds);
-  const { group: activeGroup } = useGalleryFilters();
-
-  // const displayBreed = useMemo(() => {
-  //   if (id) {
-  //     return breedEntities[id];
-  //   }
-  //   return selectedBreedFromState || allBreeds[0];
-  // }, [id, breedEntities, allBreeds, selectedBreedFromState]);
-
-  const displayBreed = useMemo(() => {
-    if (id) {
-      return breedEntities[id];
-    }
-    if (activeGroup === FAVORITES_GROUP_KEY) {
-      const firstFavorite = allBreeds.find((b) => favoritesIds.includes(b.id));
-      if (firstFavorite) return firstFavorite;
-      return null;
-    }
-    return selectedBreedFromState || allBreeds[0];
-  }, [id, breedEntities, allBreeds, selectedBreedFromState, activeGroup, favoritesIds]);
-
-  const { groupBreeds, currentIndex, prevBreed, nextBreed, handleNavigateBreed } = useBreedNavigation({
-    currentBreed: displayBreed,
-  });
+  const {
+    displayBreed,
+    groupBreeds,
+    prevBreed,
+    nextBreed,
+    positionText,
+    handleNavigateBreed,
+  } = useBreedDetailController();
 
   return (
     <div className={STYLES.mainLayout}>
@@ -81,7 +54,7 @@ export const BreedDetailView: React.FC = () => {
               onNext={groupBreeds.length > 1 && nextBreed ? () => handleNavigateBreed(nextBreed) : undefined}
               prevBreedName={prevBreed?.name}
               nextBreedName={nextBreed?.name}
-              positionText={groupBreeds.length > 1 && currentIndex !== -1 ? `${currentIndex + 1} / ${groupBreeds.length}` : undefined}
+              positionText={positionText}
             />
           ) : (
             <GalleryEmpty />
