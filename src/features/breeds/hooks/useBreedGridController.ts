@@ -7,7 +7,7 @@ import {
   selectBreedsByGroup,
 } from '@/features/breeds/breedSelectors';
 import { selectFavoritesIds, selectFavoritesCount } from '@/features/favorites/favoritesSelectors';
-import { toggleFavorite } from '@/features/favorites/favoritesActions';
+import { toggleFavorite } from '@/features/favorites/favoritesSlice';
 import { useGalleryFilters } from '@/features/breeds/hooks/useGalleryFilters';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { useMediaQuery } from '@/hooks/useMediaQuery';

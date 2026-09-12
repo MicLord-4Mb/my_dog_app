@@ -1,6 +1,6 @@
 import breedReducer from "@/features/breeds/breedReducer";
-import {favoritesReducer} from "@/features/favorites/favoritesReducer";
 import {configureStore} from "@reduxjs/toolkit";
+import favoritesReducer from "@/features/favorites/favoritesSlice";
 
 export const store = configureStore({
   reducer: {

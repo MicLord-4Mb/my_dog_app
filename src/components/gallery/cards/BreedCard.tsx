@@ -1,4 +1,4 @@
-import {toggleFavorite} from "@/features/favorites/favoritesActions";
+import {toggleFavorite} from "@/features/favorites/favoritesSlice";
 import {selectIsBreedInFavorites} from "@/features/favorites/favoritesSelectors";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import React, { useState, useEffect, useRef } from 'react';
