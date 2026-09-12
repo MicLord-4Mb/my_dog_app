@@ -2,10 +2,13 @@ import React, { useMemo } from 'react';
 import { useParams } from 'react-router';
 import { useAppSelector } from '@/store/hooks';
 import { selectAllBreedsArray, selectCurrentBreed, selectBreedEntities } from '@/features/breeds/breedSelectors';
+import { selectFavoritesIds } from '@/features/favorites/favoritesSelectors';
+import { FAVORITES_GROUP_KEY } from '@/constants/routes';
 import { BreedSelect } from '@/components/gallery/BreedSelect';
 import { BreedCard } from '@/components/gallery/BreedCard';
 import { GalleryEmpty } from '@/components/gallery/GalleryEmpty';
 import { useBreedNavigation } from '@/features/breeds/hooks/useBreedNavigation';
+import { useGalleryFilters } from '@/features/breeds/hooks/useGalleryFilters';
 
 const STYLES = {
   mainLayout: "flex flex-col gap-6",
@@ -28,13 +31,27 @@ export const BreedDetailView: React.FC = () => {
   const allBreeds = useAppSelector(selectAllBreedsArray);
   const breedEntities = useAppSelector(selectBreedEntities);
   const selectedBreedFromState = useAppSelector(selectCurrentBreed);
+  const favoritesIds = useAppSelector(selectFavoritesIds);
+  const { group: activeGroup } = useGalleryFilters();
+
+  // const displayBreed = useMemo(() => {
+  //   if (id) {
+  //     return breedEntities[id];
+  //   }
+  //   return selectedBreedFromState || allBreeds[0];
+  // }, [id, breedEntities, allBreeds, selectedBreedFromState]);
 
   const displayBreed = useMemo(() => {
     if (id) {
       return breedEntities[id];
     }
+    if (activeGroup === FAVORITES_GROUP_KEY) {
+      const firstFavorite = allBreeds.find((b) => favoritesIds.includes(b.id));
+      if (firstFavorite) return firstFavorite;
+      return null;
+    }
     return selectedBreedFromState || allBreeds[0];
-  }, [id, breedEntities, allBreeds, selectedBreedFromState]);
+  }, [id, breedEntities, allBreeds, selectedBreedFromState, activeGroup, favoritesIds]);
 
   const { groupBreeds, currentIndex, prevBreed, nextBreed, handleNavigateBreed } = useBreedNavigation({
     currentBreed: displayBreed,

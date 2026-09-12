@@ -1,7 +1,7 @@
-import {NavLink, useLocation} from "react-router";
-import {LINKS, ROUTES, FAVORITES_GROUP_KEY} from "@/constants/routes";
-import {useAppSelector} from "@/store/hooks";
-import {selectFavoritesCount} from "@/features/favorites/favoritesSelectors";
+import { NavLink, useLocation } from "react-router";
+import { LINKS, ROUTES, FAVORITES_GROUP_KEY } from "@/constants/routes";
+import { useAppSelector } from "@/store/hooks";
+import { selectFavoritesCount } from "@/features/favorites/favoritesSelectors";
 
 const STYLES = {
   header: "fixed top-0 w-full z-50 bg-surface/85 backdrop-blur-xl border-b border-secondary-fixed/30 pt-safe transition-all shadow-[0_1px_8px_rgba(0,0,0,0.04)]",
@@ -60,10 +60,9 @@ export const Header = () => {
             <NavLink
               to={LINKS.home()}
               className={({ isActive }) =>
-                `${STYLES.navLinkBase} ${
-                  isActive
-                    ? STYLES.navLinkActive
-                    : STYLES.navLinkInactive
+                `${STYLES.navLinkBase} ${isActive
+                  ? STYLES.navLinkActive
+                  : STYLES.navLinkInactive
                 }`
               }
             >
@@ -72,10 +71,9 @@ export const Header = () => {
             <NavLink
               to={LINKS.gallery()}
               className={({ isActive }) =>
-                `${STYLES.navLinkBase} ${
-                  isActive && !isFavoritesActive
-                    ? STYLES.navLinkActive
-                    : STYLES.navLinkInactive
+                `${STYLES.navLinkBase} ${isActive && !isFavoritesActive
+                  ? STYLES.navLinkActive
+                  : STYLES.navLinkInactive
                 }`
               }
             >
@@ -83,11 +81,10 @@ export const Header = () => {
             </NavLink>
             <NavLink
               to={LINKS.favorites()}
-              className={`${STYLES.navLinkBase} ${
-                isFavoritesActive
+              className={`${STYLES.navLinkBase} ${isFavoritesActive
                   ? STYLES.navLinkActive
                   : STYLES.navLinkInactive
-              }`}
+                }`}
             >
               <span>Favorites</span>
               {favoritesCount > 0 && (

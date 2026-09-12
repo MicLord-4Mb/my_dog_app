@@ -1,36 +1,36 @@
 import { redirect } from 'react-router';
 import type { LoaderFunction } from 'react-router';
 import { store } from '@/store';
-import type { DogBreed } from '@/types/dog';
 import { REQUEST_STATUS } from '@/types/request';
 import { fetchBreeds } from '@/features/breeds/breedThunks';
 import { LINKS } from '@/constants/routes';
+import { selectBreedsByGroup } from '@/features/breeds/breedSelectors';
 
-// --- Original imports (commented out, replaced by Redux-based approach) ---
-// import {loadBreedsAsync} from "@/features/breeds/loadBreeds";
-
-/**
- * Alternative galleryLoader (commented out, kept for reference)
- */
-// export interface NewGalleryLoaderData {
-//   breeds: Promise<DogBreed[]>;
-// }
-//
-// export const newGalleryLoader = (): NewGalleryLoaderData => {
-//   return {
-//     breeds: loadBreedsAsync(),
-//   }
-// }
+let activeFetchPromise: Promise<any> | null = null;
 
 /**
+ * Route loader for the Gallery route hierarchy (`id: "gallery"`).
  * Ensures breeds are loaded into the Redux store.
- * Returns the breeds array from the store, or throws a Response on error.
+ * Dispatches fetchBreeds() thunk if the store is idle and caches the promise to avoid race conditions.
+ * Throws a Response on error to trigger the route error boundary.
  */
-const ensureBreedsLoaded = async (): Promise<DogBreed[]> => {
+export const galleryLoader = async () => {
   const state = store.getState();
 
   if (state.breeds.request.status === REQUEST_STATUS.IDLE) {
-    await store.dispatch(fetchBreeds());
+    if (!activeFetchPromise) {
+      activeFetchPromise = store.dispatch(fetchBreeds());
+    }
+  }
+
+  if (activeFetchPromise) {
+    try {
+      await activeFetchPromise;
+    } catch {
+      // Ignore thunk dispatch errors here, the state will reflect REQUEST_STATUS.ERROR
+    } finally {
+      activeFetchPromise = null;
+    }
   }
 
   const newState = store.getState();
@@ -42,19 +42,6 @@ const ensureBreedsLoaded = async (): Promise<DogBreed[]> => {
     );
   }
 
-  const data = newState.breeds.request.data;
-  if (!data) return [];
-
-  return data.ids.map(id => data.entities[id]);
-};
-
-/**
- * Route loader for the Gallery route hierarchy (`id: "gallery"`).
- * Dispatches fetchBreeds() thunk if the store is idle.
- * Throws a Response on error to trigger the route error boundary.
- */
-export const galleryLoader = async () => {
-  await ensureBreedsLoaded();
   return null;
 };
 
@@ -65,13 +52,18 @@ export const galleryLoader = async () => {
 export const galleryIndexLoader: LoaderFunction = async ({ request }) => {
   const url = new URL(request.url);
   const group = url.searchParams.get('group') || 'all';
-  const breeds = await ensureBreedsLoaded();
+  await galleryLoader();
 
-  const firstBreed = (group.toLowerCase() !== 'all')
-    ? (breeds.find((b) => b.breedGroup?.toLowerCase() === group.toLowerCase()) || breeds[0])
-    : breeds[0];
+  // const firstBreed = (group.toLowerCase() !== 'all')
+  //   ? (breeds.find((b) => b.breedGroup?.toLowerCase() === group.toLowerCase()) || breeds[0])
+  //   : breeds[0];
 
-  if (!firstBreed) return null;
+  const groupBreeds = selectBreedsByGroup(store.getState(), group);
+  const firstBreed = groupBreeds[0];
+
+  if (!firstBreed) {
+    return redirect(LINKS.grid(group));
+  }
   return redirect(LINKS.breed(firstBreed.id, group));
 };
 
