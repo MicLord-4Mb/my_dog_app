@@ -1,21 +1,20 @@
 import React from 'react';
 import { useNavigate } from 'react-router';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { store } from '@/store';
-import { selectBreed } from '@/features/breeds/breedActions';
+import { selectBreed, autoselectFirstInGroup } from '@/features/breeds/breedActions';
 import {
   selectAllBreedsArray,
   selectUniqueBreedGroups,
   selectCurrentBreed,
-  selectSelectedBreedId,
   selectBreedsByGroup,
+  isBreedInGroup,
 } from '@/features/breeds/breedSelectors';
-import { autoselectFirstInGroup } from '@/features/breeds/breedActions';
 import { LINKS } from '@/constants/routes';
-import { selectFavoritesCount } from '@/features/favorites/favoritesSelectors';
+import { selectFavoritesCount, selectFavoritesIds } from '@/features/favorites/favoritesSelectors';
 import { useGalleryFilters } from '@/features/breeds/hooks/useGalleryFilters';
 import { GroupFilterChips } from '@/components/gallery/filters/GroupFilterChips';
 import { BreedCombobox } from '@/components/gallery/filters/BreedCombobox';
+import { FAVORITES_GROUP_KEY } from '@/constants/routes';
 
 const STYLES = {
   compactLayout: "w-full flex flex-col gap-3 relative z-30",
@@ -48,15 +47,16 @@ interface BreedSelectProps {
 export const BreedSelect: React.FC<BreedSelectProps> = ({ variant = 'sidebar' }) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  
+
   const allBreeds = useAppSelector(selectAllBreedsArray);
   const breedGroups = useAppSelector(selectUniqueBreedGroups);
   const selectedBreed = useAppSelector(selectCurrentBreed);
-  const selectedBreedId = useAppSelector(selectSelectedBreedId);
   const favoritesCount = useAppSelector(selectFavoritesCount);
+  const favoritesIds = useAppSelector(selectFavoritesIds);
 
   // Hook managing filter query parameters and URL synchronization
   const { group: activeGroup, setGroup } = useGalleryFilters();
+
   // Breeds filtered by active group via memoized selector
   const filteredBreeds = useAppSelector((state) => selectBreedsByGroup(state, activeGroup));
 
@@ -73,19 +73,28 @@ export const BreedSelect: React.FC<BreedSelectProps> = ({ variant = 'sidebar' })
 
   /**
    * Toggles the active breed group filter.
-   * Automatically selects the first matching breed in the group.
+   * Automatically navigates to the first matching breed in the group.
    * 
    * @param group - The group name to activate, or `null` for all groups.
    */
   const handleGroupToggle = (group: string | null) => {
-    setGroup(group);
     dispatch(autoselectFirstInGroup(group));
-    // const matchingBreeds = allBreeds.filter((b) => isBreedInGroup(b, group));
-    const matchingBreeds = selectBreedsByGroup(store.getState(), group);
 
-    if (matchingBreeds.length > 0) {
-      const firstBreedId = matchingBreeds[0].id;
-      navigate(LINKS.breed(firstBreedId, group));
+    let matchingFirstBreedId: string | null = null;
+    if (group === FAVORITES_GROUP_KEY) {
+      const firstFav = allBreeds.find((b) => favoritesIds.includes(b.id));
+      matchingFirstBreedId = firstFav ? firstFav.id : null;
+    } else if (group) {
+      const firstMatch = allBreeds.find((b) => isBreedInGroup(b, group));
+      matchingFirstBreedId = firstMatch ? firstMatch.id : null;
+    } else if (allBreeds.length > 0) {
+      matchingFirstBreedId = allBreeds[0].id;
+    }
+
+    if (matchingFirstBreedId) {
+      navigate(LINKS.breed(matchingFirstBreedId, group));
+    } else {
+      setGroup(group);
     }
   };
 
@@ -112,7 +121,6 @@ export const BreedSelect: React.FC<BreedSelectProps> = ({ variant = 'sidebar' })
           <BreedCombobox
             breeds={filteredBreeds}
             selectedBreed={selectedBreed}
-            selectedBreedId={selectedBreedId}
             onSelectBreed={handleSelect}
           />
         </div>
@@ -137,7 +145,6 @@ export const BreedSelect: React.FC<BreedSelectProps> = ({ variant = 'sidebar' })
         <BreedCombobox
           breeds={filteredBreeds}
           selectedBreed={selectedBreed}
-          selectedBreedId={selectedBreedId}
           onSelectBreed={handleSelect}
         />
       </div>
@@ -148,7 +155,6 @@ export const BreedSelect: React.FC<BreedSelectProps> = ({ variant = 'sidebar' })
             <span className="label-caption">Filter by Group</span>
             {activeGroup && (
               <button
-                type="button"
                 onClick={() => handleGroupToggle(null)}
                 className={STYLES.clearFilterBtn}
               >
