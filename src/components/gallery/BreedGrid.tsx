@@ -78,18 +78,7 @@ export const BreedGrid = () => {
   const isFavoritesMode = activeGroup === FAVORITES_GROUP_KEY;
 
   // Breeds filtered by active group via memoized selector (now natively supports favorites)
-  const groupBreeds = useAppSelector((state) => selectBreedsByGroup(state, activeGroup));
-
-  /**
-   * Base set of breeds: groupBreeds already contains the favorite breeds when in favorites mode.
-   */
-  // const baseBreeds = useMemo(() => {
-  //   if (isFavoritesMode) {
-  //     return breeds.filter((b) => favoritesIds.includes(b.id));
-  //   }
-  //   return groupBreeds;
-  // }, [isFavoritesMode, breeds, favoritesIds, groupBreeds]);
-  const baseBreeds = groupBreeds;
+  const baseBreeds = useAppSelector((state) => selectBreedsByGroup(state, activeGroup));
 
   /**
    * Memoized search query filtering applied on top of group-filtered breeds.
