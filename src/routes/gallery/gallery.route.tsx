@@ -1,4 +1,4 @@
-import { GalleryLayout } from '@/components/layout/GalleryLayout';
+import { GalleryLayout } from '@/components/gallery/views/GalleryLayout';
 import { ROUTES } from '@/constants/routes';
 import { GalleryErrorBoundary } from '@/routes/gallery/gallery.error';
 import {
@@ -32,7 +32,7 @@ export const galleryRoute: RouteObject = {
       index: true,
       loader: galleryIndexLoader,
       lazy: async () => {
-        const { BreedDetailView } = await import('@/pages/BreedDetailView');
+        const { BreedDetailView } = await import('@/components/gallery/views/BreedDetailView');
         return { Component: BreedDetailView };
       }
     },
@@ -40,7 +40,7 @@ export const galleryRoute: RouteObject = {
       path: ROUTES.GALLERY_CHILDREN.BREED,
       loader: breedDetailLoader,
       lazy: async () => {
-        const { BreedDetailView } = await import('@/pages/BreedDetailView');
+        const { BreedDetailView } = await import('@/components/gallery/views/BreedDetailView');
         return { Component: BreedDetailView };
       }
     },
@@ -48,7 +48,7 @@ export const galleryRoute: RouteObject = {
       path: ROUTES.GALLERY_CHILDREN.GRID,
       loader: breedGridLoader,
       lazy: async () => {
-        const { BreedGrid } = await import('@/components/gallery/BreedGrid');
+        const { BreedGrid } = await import('@/components/gallery/views/BreedGrid');
         return { Component: BreedGrid };
       }
     },

@@ -1,6 +1,6 @@
 import React from 'react';
 import type { DogBreed } from '@/types/dog';
-import { StatCard } from '@/components/gallery/StatCard';
+import { StatCard } from '@/components/gallery/cards/StatCard';
 
 /**
  * Props for the `BreedStatsGrid` molecule.

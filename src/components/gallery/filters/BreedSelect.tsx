@@ -14,8 +14,8 @@ import { autoselectFirstInGroup } from '@/features/breeds/breedActions';
 import { LINKS } from '@/constants/routes';
 import { selectFavoritesCount } from '@/features/favorites/favoritesSelectors';
 import { useGalleryFilters } from '@/features/breeds/hooks/useGalleryFilters';
-import { GroupFilterChips } from '@/components/gallery/ui/GroupFilterChips';
-import { BreedCombobox } from '@/components/gallery/ui/BreedCombobox';
+import { GroupFilterChips } from '@/components/gallery/filters/GroupFilterChips';
+import { BreedCombobox } from '@/components/gallery/filters/BreedCombobox';
 
 const STYLES = {
   compactLayout: "w-full flex flex-col gap-3 relative z-30",

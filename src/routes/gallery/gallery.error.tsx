@@ -1,7 +1,7 @@
 import {isRouteErrorResponse, useNavigate, useRouteError} from "react-router";
 import {useAppDispatch} from "@/store/hooks.ts";
 import {fetchBreeds} from "@/features/breeds/breedThunks.ts";
-import {GalleryError} from "@/components/gallery/GalleryError.tsx";
+import {GalleryError} from "@/components/gallery/views/GalleryError.tsx";
 
 export const GalleryErrorBoundary = () => {
   const error = useRouteError();
