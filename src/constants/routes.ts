@@ -9,6 +9,12 @@ export const ROUTE_SEGMENTS = {
 } as const;
 
 /**
+ * Special filter key representing user-bookmarked favorite breeds.
+ * Used as a virtual group name in URL query parameters (`?group=favorites`).
+ */
+export const FAVORITES_GROUP_KEY = 'favorites';
+
+/**
  * Application route path patterns.
  * Provides a single source of truth for all absolute URLs and nested relative segments.
  */
@@ -17,6 +23,8 @@ export const ROUTES = {
   GALLERY: `/${ROUTE_SEGMENTS.GALLERY}`,
   GALLERY_GRID: `/${ROUTE_SEGMENTS.GALLERY}/${ROUTE_SEGMENTS.GRID}`,
   GALLERY_BREED: `/${ROUTE_SEGMENTS.GALLERY}/${ROUTE_SEGMENTS.BREED}`,
+
+  NOT_FOUND: '*',
 
   /** Relative route paths for nested child routes in React Router */
   GALLERY_CHILDREN: {
@@ -29,7 +37,8 @@ export type RoutePattern =
   | typeof ROUTES.HOME
   | typeof ROUTES.GALLERY
   | typeof ROUTES.GALLERY_GRID
-  | typeof ROUTES.GALLERY_BREED;
+  | typeof ROUTES.GALLERY_BREED
+  | typeof ROUTES.NOT_FOUND;
 
 const getGroupQuery = (group?: string | null) => {
   const targetGroup = group && group.trim() !== '' ? group.trim() : 'all';
@@ -45,7 +54,7 @@ export const LINKS = {
     `${ROUTES.GALLERY_GRID}${getGroupQuery(group)}` as const,
 
   favorites: () =>
-    `${ROUTES.GALLERY_GRID}?group=favorites` as const,
+    `${ROUTES.GALLERY_GRID}?group=${FAVORITES_GROUP_KEY}` as const,
 
   breed: (id: string, group?: string | null) =>
     `${ROUTES.GALLERY_BREED.replace(':id', encodeURIComponent(id))}${getGroupQuery(group)}` as const,

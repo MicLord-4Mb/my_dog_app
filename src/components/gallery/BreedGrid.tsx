@@ -1,11 +1,13 @@
 import { useMemo } from 'react';
-import { useAppSelector } from '@/store/hooks';
+import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import {
   selectAllBreedsArray,
   selectUniqueBreedGroups,
   selectBreedGroupCounts,
   selectBreedsByGroup,
 } from '@/features/breeds/breedSelectors';
+import { selectFavoritesIds, selectFavoritesCount } from '@/features/favorites/favoritesSelectors';
+import { toggleFavorite } from '@/features/favorites/favoritesActions';
 import { BreedCompactCard } from '@/components/gallery/BreedCompactCard';
 import { Pagination } from '@/components/gallery/Pagination';
 import { Button } from '@/components/ui/button';
@@ -13,7 +15,7 @@ import { SearchFilterBar } from '@/components/gallery/ui/SearchFilterBar';
 import { GroupFilterChips } from '@/components/gallery/ui/GroupFilterChips';
 import { useGalleryFilters } from '@/features/breeds/hooks/useGalleryFilters';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
-import { LINKS } from '@/constants/routes';
+import { LINKS, FAVORITES_GROUP_KEY } from '@/constants/routes';
 
 /** Number of items rendered per page on desktop and loaded per batch on mobile */
 const PAGE_SIZE = 8;
@@ -50,10 +52,16 @@ const STYLES = {
  * - Real-time client-side search and breed group filtering synchronized with URL parameters.
  */
 export const BreedGrid = () => {
+  const dispatch = useAppDispatch();
+
   // Redux normalized selectors
   const breeds = useAppSelector(selectAllBreedsArray);
   const breedGroups = useAppSelector(selectUniqueBreedGroups);
   const groupCounts = useAppSelector(selectBreedGroupCounts);
+
+  // Favorites from Redux store
+  const favoritesIds = useAppSelector(selectFavoritesIds);
+  const favoritesCount = useAppSelector(selectFavoritesCount);
 
   // Hook managing filter query parameters and URL synchronization
   const {
@@ -67,22 +75,33 @@ export const BreedGrid = () => {
 
   // Active group: prioritizing URL query parameter over local props
   const activeGroup = groupFromUrl;
+  const isFavoritesMode = activeGroup === FAVORITES_GROUP_KEY;
 
   // Breeds filtered by active group via memoized selector
   const groupBreeds = useAppSelector((state) => selectBreedsByGroup(state, activeGroup));
 
   /**
+   * Base set of breeds: either favorites filtered from Redux or standard group-filtered breeds.
+   */
+  const baseBreeds = useMemo(() => {
+    if (isFavoritesMode) {
+      return breeds.filter((b) => favoritesIds.includes(b.id));
+    }
+    return groupBreeds;
+  }, [isFavoritesMode, breeds, favoritesIds, groupBreeds]);
+
+  /**
    * Memoized search query filtering applied on top of group-filtered breeds.
    */
   const filteredBreeds = useMemo(() => {
-    if (!searchQuery) return groupBreeds;
+    if (!searchQuery) return baseBreeds;
     const query = searchQuery.toLowerCase();
-    return groupBreeds.filter((breed) =>
+    return baseBreeds.filter((breed) =>
       breed.name.toLowerCase().includes(query) ||
       breed.temperament.some((trait) => trait.toLowerCase().includes(query)) ||
       (breed.origin && breed.origin.toLowerCase().includes(query))
     );
-  }, [groupBreeds, searchQuery]);
+  }, [baseBreeds, searchQuery]);
 
   // Mobile infinite scroll state and IntersectionObserver sentinel
   const { itemCount: mobileCount, setItemCount: setMobileCount, sentinelRef } = useInfiniteScroll({
@@ -120,6 +139,13 @@ export const BreedGrid = () => {
     setSearchQuery('');
   };
 
+  /**
+   * Dispatches favorite toggle action to Redux store.
+   */
+  const handleToggleFavorite = (breedId: string) => {
+    dispatch(toggleFavorite(breedId));
+  };
+
   return (
     <div className={STYLES.container}>
       {/* Header, Search Bar & Group Filter Section */}
@@ -127,10 +153,12 @@ export const BreedGrid = () => {
         <div className={STYLES.headerTopRow}>
           <div>
             <h1 className={STYLES.title}>
-              Explore Breeds
+              {isFavoritesMode ? 'Favorite Breeds' : 'Explore Breeds'}
             </h1>
             <p className={STYLES.subtitle}>
-              Discover the perfect companion. Browse through our comprehensive gallery of dog breeds, categorized by group, temperament, and care needs.
+              {isFavoritesMode
+                ? 'Your curated collection of beloved dog breeds, with full search and pagination.'
+                : 'Discover the perfect companion. Browse through our comprehensive gallery of dog breeds, categorized by group, temperament, and care needs.'}
             </p>
           </div>
 
@@ -148,6 +176,7 @@ export const BreedGrid = () => {
           onGroupSelect={handleGroupSelect}
           totalCount={breeds.length}
           groupCounts={groupCounts}
+          favoritesCount={favoritesCount}
           variant="pills"
         />
       </section>
@@ -156,13 +185,22 @@ export const BreedGrid = () => {
       {filteredBreeds.length === 0 ? (
         <div className={STYLES.emptyContainer}>
           <div className={STYLES.emptyIconWrapper}>
-            <span className={STYLES.emptyIcon}>pets</span>
+            <span
+              className={STYLES.emptyIcon}
+              style={{ fontVariationSettings: isFavoritesMode ? "'FILL' 0" : undefined }}
+            >
+              {isFavoritesMode ? 'favorite' : 'pets'}
+            </span>
           </div>
           <h3 className={STYLES.emptyTitle}>
-            No breeds found
+            {isFavoritesMode
+              ? (searchQuery ? 'No matching favorites' : 'No favorite breeds yet')
+              : 'No breeds found'}
           </h3>
           <p className={STYLES.emptyDescription}>
-            We couldn't find any breeds matching your current filter and search query.
+            {isFavoritesMode
+              ? 'Start adding breeds to your favorites to build your personal collection.'
+              : "We couldn't find any breeds matching your current filter and search query."}
           </p>
           <Button
             variant="default"
@@ -170,7 +208,7 @@ export const BreedGrid = () => {
             onClick={handleResetFilters}
             className={STYLES.resetBtn}
           >
-            Reset Filters
+            {isFavoritesMode && !searchQuery ? 'Browse All Breeds' : 'Reset Filters'}
           </Button>
         </div>
       ) : (
@@ -183,6 +221,8 @@ export const BreedGrid = () => {
                   key={breed.id}
                   breed={breed}
                   to={LINKS.breed(breed.id, activeGroup)}
+                  isInFavorites={favoritesIds.includes(breed.id)}
+                  onToggleFavorite={() => handleToggleFavorite(breed.id)}
                 />
               ))}
             </section>
@@ -204,6 +244,8 @@ export const BreedGrid = () => {
                   key={breed.id}
                   breed={breed}
                   to={LINKS.breed(breed.id, activeGroup)}
+                  isInFavorites={favoritesIds.includes(breed.id)}
+                  onToggleFavorite={() => handleToggleFavorite(breed.id)}
                 />
               ))}
             </section>

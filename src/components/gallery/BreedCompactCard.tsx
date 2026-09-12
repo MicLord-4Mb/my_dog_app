@@ -1,9 +1,26 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router';
+import { cva } from 'class-variance-authority';
 import type { DogBreed } from '@/types/dog';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+
+const actionButtonVariants = cva(
+  'w-9 h-9 sm:w-10 sm:h-10 rounded-full backdrop-blur-md shadow-sm transition-all',
+  {
+    variants: {
+      variant: {
+        ghost: 'bg-surface/80 hover:bg-surface text-on-surface hover:text-primary',
+        active: 'bg-primary text-on-primary scale-105 hover:bg-primary/90',
+      },
+    },
+    defaultVariants: {
+      variant: 'ghost',
+    },
+  }
+);
 
 const STYLES = {
   linkWrapper: "block group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-2xl h-full",
@@ -27,19 +44,28 @@ const STYLES = {
   footerText: "text-xs font-medium text-on-surface-variant",
   detailsBtn: "text-primary font-semibold text-xs p-0 h-auto gap-1 group-hover:translate-x-1 duration-200",
   detailsBtnIcon: "material-symbols-outlined text-[16px]",
+  favoriteBtn: "absolute top-2.5 right-2.5 z-20",
+  favoriteIcon: "material-symbols-outlined text-[20px] sm:text-[22px]",
 };
 
 interface BreedCompactCardProps {
   breed: DogBreed;
   to: string;
+  isInFavorites?: boolean;
+  onToggleFavorite?: () => void;
 }
 
-export const BreedCompactCard: React.FC<BreedCompactCardProps> = ({ breed, to }) => {
+export const BreedCompactCard: React.FC<BreedCompactCardProps> = ({
+  breed,
+  to,
+  isInFavorites = false,
+  onToggleFavorite,
+}) => {
   const [imgError, setImgError] = useState(false);
   const imageUrl = breed.imageUrl;
   const showPlaceholder = !imageUrl || imgError;
   const temperamentList = breed.temperament;
-  
+
   const avgWeight = breed.weightMetric
     ? `${breed.weightMetric} kg`
     : (breed.weightImperial ? `${breed.weightImperial} lbs` : 'N/A');
@@ -76,6 +102,31 @@ export const BreedCompactCard: React.FC<BreedCompactCardProps> = ({ breed, to })
             <span className={STYLES.groupBadgeIcon}>verified</span>
             <span>{breed.breedGroup || 'Purebred'}</span>
           </Badge>
+
+          {onToggleFavorite && (
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label={isInFavorites ? "Remove from favorites" : "Save to favorites"}
+              title={isInFavorites ? "Remove from favorites" : "Save to favorites"}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onToggleFavorite();
+              }}
+              className={cn(
+                STYLES.favoriteBtn,
+                actionButtonVariants({ variant: isInFavorites ? 'active' : 'ghost' })
+              )}
+            >
+              <span
+                className={STYLES.favoriteIcon}
+                style={{ fontVariationSettings: isInFavorites ? "'FILL' 1" : "'FILL' 0" }}
+              >
+                favorite
+              </span>
+            </Button>
+          )}
         </div>
 
         <CardContent className={STYLES.contentBody}>
