@@ -1,6 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router';
-import { ROUTES } from '@/constants/routes';
+import {Link} from "react-router";
+import {LINKS} from "@/constants/routes";
 
 const STYLES = {
   footer: "w-full bg-surface-container py-10 md:py-12 border-t border-secondary-fixed/30 mt-auto mb-16 md:mb-0",
@@ -20,7 +19,7 @@ const STYLES = {
  * Footer component:
  * Displays brand mark, navigation links, API attribution, and copyright.
  */
-export const Footer: React.FC = () => {
+export const Footer = () => {
   return (
     <footer className={STYLES.footer}>
       <div className={STYLES.container}>
@@ -35,10 +34,10 @@ export const Footer: React.FC = () => {
           </div>
 
           <nav className={STYLES.nav}>
-            <Link to={ROUTES.HOME} className={STYLES.navLink}>
+            <Link to={LINKS.home()} className={STYLES.navLink}>
               Home
             </Link>
-            <Link to={ROUTES.GALLERY} className={STYLES.navLink}>
+            <Link to={LINKS.gallery()} className={STYLES.navLink}>
               Gallery
             </Link>
             <span className={STYLES.navAction}>

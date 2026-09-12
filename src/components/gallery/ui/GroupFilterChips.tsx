@@ -1,6 +1,7 @@
 import React from 'react';
 import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
+import { FAVORITES_GROUP_KEY } from '@/constants/routes';
 
 // CVA configurations for container layout variants
 const containerVariants = cva('', {
@@ -73,6 +74,8 @@ interface GroupFilterChipsProps {
   totalCount?: number;
   /** Map of group names to their respective breed count. */
   groupCounts?: Record<string, number>;
+  /** Optional number of bookmarked favorite breeds. */
+  favoritesCount?: number;
   /** Display style variant. */
   variant?: 'pills' | 'chips' | 'compact-chips';
 }
@@ -91,6 +94,7 @@ export const GroupFilterChips: React.FC<GroupFilterChipsProps> = ({
   onGroupSelect,
   totalCount,
   groupCounts = {},
+  favoritesCount,
   variant = 'pills',
 }) => {
   const allLabel =
@@ -100,25 +104,54 @@ export const GroupFilterChips: React.FC<GroupFilterChipsProps> = ({
         ? 'All'
         : 'All Groups';
 
+  const isAllActive = !activeGroup || activeGroup.toLowerCase() === 'all';
+
   return (
     <div className={containerVariants({ variant })}>
       <button
         type="button"
-        onClick={() => onGroupSelect(null)}
-        className={cn(chipVariants({ variant, state: activeGroup === null ? 'active' : 'inactive' }))}
+        onClick={() => onGroupSelect('all')}
+        className={cn(chipVariants({ variant, state: isAllActive ? 'active' : 'inactive' }))}
       >
         {allLabel}
       </button>
 
+      {favoritesCount !== undefined && (
+        <button
+          type="button"
+          onClick={() =>
+            onGroupSelect(activeGroup === FAVORITES_GROUP_KEY ? 'all' : FAVORITES_GROUP_KEY)
+          }
+          className={cn(
+            chipVariants({
+              variant,
+              state: activeGroup === FAVORITES_GROUP_KEY ? 'active' : 'inactive',
+            }),
+            activeGroup === FAVORITES_GROUP_KEY
+              ? 'bg-primary text-on-primary shadow-sm'
+              : 'hover:text-primary'
+          )}
+        >
+          <span
+            className="material-symbols-outlined text-[16px] mr-1"
+            style={{ fontVariationSettings: activeGroup === FAVORITES_GROUP_KEY ? "'FILL' 1" : "'FILL' 0" }}
+          >
+            favorite
+          </span>
+          <span>Favorites</span>
+          <span className={STYLES.countBadge}>({favoritesCount})</span>
+        </button>
+      )}
+
       {groups.map((group) => {
         const count = groupCounts[group];
-        const isSelected = activeGroup?.toLowerCase() === group.toLowerCase();
+        const isSelected = !isAllActive && activeGroup?.toLowerCase() === group.toLowerCase();
 
         return (
           <button
             key={group}
             type="button"
-            onClick={() => onGroupSelect(isSelected ? null : group)}
+            onClick={() => onGroupSelect(isSelected ? 'all' : group)}
             className={cn(chipVariants({ variant, state: isSelected ? 'active' : 'inactive' }))}
           >
             {group}

@@ -91,7 +91,7 @@ export const selectBreedGroupCounts = createSelector(
  * @returns boolean indicating if the breed matches the group filter.
  */
 export const isBreedInGroup = (breed: DogBreed, group?: string | null): boolean => {
-  if (!group) return true;
+  if (!group || group.toLowerCase() === 'all') return true;
   return breed.breedGroup?.toLowerCase() === group.toLowerCase();
 };
 
@@ -101,7 +101,7 @@ export const isBreedInGroup = (breed: DogBreed, group?: string | null): boolean 
 export const selectBreedsByGroup = createSelector(
   [selectAllBreedsArray, (_state: RootState, group?: string | null) => group],
   (breeds, group) => {
-    if (!group) return breeds;
+    if (!group || group.toLowerCase() === 'all') return breeds;
     return breeds.filter((b) => isBreedInGroup(b, group));
   }
 );

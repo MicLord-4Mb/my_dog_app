@@ -1,37 +1,56 @@
-import {GalleryLayout} from "@/components/layout/GalleryLayout";
-import {ROUTES,LINKS} from "@/constants/routes";
-import {GalleryErrorBoundary} from "@/routes/gallery/gallery.error";
-import {galleryLoader} from "@/routes/gallery/gallery.loader";
-import type {RouteObject} from "react-router";
+import { GalleryLayout } from '@/components/layout/GalleryLayout';
+import { ROUTES } from '@/constants/routes';
+import { GalleryErrorBoundary } from '@/routes/gallery/gallery.error';
+import {
+  galleryLoader,
+  galleryIndexLoader,
+  breedDetailLoader,
+  breedGridLoader,
+} from '@/routes/gallery/gallery.loader';
+import type { RouteObject } from 'react-router';
 
-export const galleryRoute: RouteObject =
-  {
-    path: ROUTES.GALLERY,
-    id: 'gallery',
-    loader: galleryLoader,
-    errorElement: <GalleryErrorBoundary/>,
-    element: <GalleryLayout/>,
-    children: [
-      {
-        path: ROUTES.GALLERY,
-        lazy: async () => {
-          const { GalleryPage } = await import("@/pages/GalleryPage");
-          return { Component: GalleryPage };
-        },
-      },
-      {
-        path: ROUTES.GALLERY_BREED,
-        lazy: async () => {
-          const { GalleryPage } = await import("@/pages/GalleryPage");
-          return { Component: GalleryPage };
-        },
-      },
-      {
-        path: ROUTES.GALLERY_GRID,
-        lazy: async () => {
-          const { GalleryPage } = await import("@/pages/GalleryPage");
-          return { Component: GalleryPage };
-        },
-      },
-    ]
-  };
+/**
+ * Modular route configuration for the Gallery feature (`/gallery/*`).
+ *
+ * Encapsulates:
+ * - `loader`: Redux-integrated data retrieval via `fetchBreeds()` thunk.
+ * - `errorElement`: Scoped error boundary that preserves the outer application shell.
+ * - `element`: `GalleryLayout` providing ambient visual wrapper and nested `<Outlet />`.
+ * - `children`:
+ *   - `/gallery`: Index route — redirects to the first breed detail page via `galleryIndexLoader`.
+ *   - `/gallery/breed/:id`: Mounts `BreedDetailView` displaying the specified breed.
+ *   - `/gallery/grid`: Mounts `BreedGrid` displaying the multi-column searchable catalog.
+ */
+export const galleryRoute: RouteObject = {
+  path: ROUTES.GALLERY,
+  id: ROUTES.GALLERY,
+  loader: galleryLoader,
+  errorElement: <GalleryErrorBoundary />,
+  element: <GalleryLayout />,
+  children: [
+    {
+      index: true,
+      loader: galleryIndexLoader,
+      lazy: async () => {
+        const { BreedDetailView } = await import('@/pages/BreedDetailView');
+        return { Component: BreedDetailView };
+      }
+    },
+    {
+      path: ROUTES.GALLERY_CHILDREN.BREED,
+      loader: breedDetailLoader,
+      lazy: async () => {
+        const { BreedDetailView } = await import('@/pages/BreedDetailView');
+        return { Component: BreedDetailView };
+      }
+    },
+    {
+      path: ROUTES.GALLERY_CHILDREN.GRID,
+      loader: breedGridLoader,
+      lazy: async () => {
+        const { BreedGrid } = await import('@/components/gallery/BreedGrid');
+        return { Component: BreedGrid };
+      }
+    },
+  ],
+};
