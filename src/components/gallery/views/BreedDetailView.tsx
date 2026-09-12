@@ -4,9 +4,9 @@ import { useAppSelector } from '@/store/hooks';
 import { selectAllBreedsArray, selectCurrentBreed, selectBreedEntities } from '@/features/breeds/breedSelectors';
 import { selectFavoritesIds } from '@/features/favorites/favoritesSelectors';
 import { FAVORITES_GROUP_KEY } from '@/constants/routes';
-import { BreedSelect } from '@/components/gallery/BreedSelect';
-import { BreedCard } from '@/components/gallery/BreedCard';
-import { GalleryEmpty } from '@/components/gallery/GalleryEmpty';
+import { BreedSelect } from '@/components/gallery/filters/BreedSelect';
+import { BreedCard } from '@/components/gallery/cards/BreedCard';
+import { GalleryEmpty } from '@/components/gallery/views/GalleryEmpty';
 import { useBreedNavigation } from '@/features/breeds/hooks/useBreedNavigation';
 import { useGalleryFilters } from '@/features/breeds/hooks/useGalleryFilters';
 

@@ -5,9 +5,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import type { DogBreed } from '@/types/dog';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { BreedHeroImage } from '@/components/gallery/ui/BreedHeroImage';
-import { BreedStatsGrid } from '@/components/gallery/ui/BreedStatsGrid';
-import { InfoCard } from '@/components/gallery/wrappers/InfoCard';
+import { BreedHeroImage } from '@/components/gallery/cards/BreedHeroImage';
+import { BreedStatsGrid } from '@/components/gallery/cards/BreedStatsGrid';
+import { InfoCard } from '@/components/gallery/cards/InfoCard';
 import { CircularProgressIcon } from '@/components/icons/CircularProgressIcon';
 
 const STYLES = {

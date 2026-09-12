@@ -1,6 +1,6 @@
 import {Button} from "@/components/ui/button";
 import {LINKS} from "@/constants/routes";
-import {NotFoundPage} from "@/pages/NotFoundPage";
+import {NotFoundPage} from "@/components/not-found/NotFoundPage";
 import {isRouteErrorResponse, Link, useRevalidator, useRouteError} from "react-router";
 
 const STYLES = {

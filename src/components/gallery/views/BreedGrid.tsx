@@ -8,11 +8,11 @@ import {
 } from '@/features/breeds/breedSelectors';
 import { selectFavoritesIds, selectFavoritesCount } from '@/features/favorites/favoritesSelectors';
 import { toggleFavorite } from '@/features/favorites/favoritesActions';
-import { BreedCompactCard } from '@/components/gallery/BreedCompactCard';
-import { Pagination } from '@/components/gallery/Pagination';
+import { BreedCompactCard } from '@/components/gallery/cards/BreedCompactCard';
+import { Pagination } from '@/components/gallery/filters/Pagination';
 import { Button } from '@/components/ui/button';
-import { SearchFilterBar } from '@/components/gallery/ui/SearchFilterBar';
-import { GroupFilterChips } from '@/components/gallery/ui/GroupFilterChips';
+import { SearchFilterBar } from '@/components/gallery/filters/SearchFilterBar';
+import { GroupFilterChips } from '@/components/gallery/filters/GroupFilterChips';
 import { useGalleryFilters } from '@/features/breeds/hooks/useGalleryFilters';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { LINKS, FAVORITES_GROUP_KEY } from '@/constants/routes';
