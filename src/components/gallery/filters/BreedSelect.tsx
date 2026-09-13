@@ -10,7 +10,7 @@ import {
   isBreedInGroup,
 } from '@/features/breeds/breedSelectors';
 import { LINKS } from '@/constants/routes';
-import { selectFavoritesCount, selectFavoritesIds } from '@/features/favorites/favoritesSelectors';
+import { selectFavoritesCount, selectFavoritesSet } from '@/features/favorites/favoritesSelectors';
 import { useGalleryFilters } from '@/features/breeds/hooks/useGalleryFilters';
 import { GroupFilterChips } from '@/components/gallery/filters/GroupFilterChips';
 import { BreedCombobox } from '@/components/gallery/filters/BreedCombobox';
@@ -52,7 +52,7 @@ export const BreedSelect: React.FC<BreedSelectProps> = ({ variant = 'sidebar' })
   const breedGroups = useAppSelector(selectUniqueBreedGroups);
   const selectedBreed = useAppSelector(selectCurrentBreed);
   const favoritesCount = useAppSelector(selectFavoritesCount);
-  const favoritesIds = useAppSelector(selectFavoritesIds);
+  const favoritesSet = useAppSelector(selectFavoritesSet);
 
   // Hook managing filter query parameters and URL synchronization
   const { group: activeGroup, setGroup } = useGalleryFilters();
@@ -82,7 +82,7 @@ export const BreedSelect: React.FC<BreedSelectProps> = ({ variant = 'sidebar' })
 
     let matchingFirstBreedId: string | null = null;
     if (group === FAVORITES_GROUP_KEY) {
-      const firstFav = allBreeds.find((b) => favoritesIds.includes(b.id));
+      const firstFav = allBreeds.find((b) => favoritesSet.has(b.id));
       matchingFirstBreedId = firstFav ? firstFav.id : null;
     } else if (group) {
       const firstMatch = allBreeds.find((b) => isBreedInGroup(b, group));

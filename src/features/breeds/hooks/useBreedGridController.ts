@@ -6,7 +6,7 @@ import {
   selectBreedGroupCounts,
   selectBreedsByGroup,
 } from '@/features/breeds/breedSelectors';
-import { selectFavoritesIds, selectFavoritesCount } from '@/features/favorites/favoritesSelectors';
+import { selectFavoritesSet, selectFavoritesCount } from '@/features/favorites/favoritesSelectors';
 import { toggleFavorite } from '@/features/favorites/favoritesSlice';
 import { useGalleryFilters } from '@/features/breeds/hooks/useGalleryFilters';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
@@ -49,8 +49,8 @@ export interface BreedGridControllerReturn {
   desktopBreeds: DogBreed[];
   /** Progressively accumulated slice of breeds for mobile rendering. */
   mobileBreeds: DogBreed[];
-  /** Array of IDs of favorited dog breeds. */
-  favoritesIds: string[];
+  /** Set of IDs of favorited dog breeds for O(1) membership checks. */
+  favoritesSet: Set<string>;
 
   // --- Pagination & Infinite Scroll State ---
   /** Current 1-based page index for desktop pagination. */
@@ -98,7 +98,7 @@ export function useBreedGridController(): BreedGridControllerReturn {
   const breeds = useAppSelector(selectAllBreedsArray);
   const breedGroups = useAppSelector(selectUniqueBreedGroups);
   const groupCounts = useAppSelector(selectBreedGroupCounts);
-  const favoritesIds = useAppSelector(selectFavoritesIds);
+  const favoritesSet = useAppSelector(selectFavoritesSet);
   const favoritesCount = useAppSelector(selectFavoritesCount);
 
   // --- URL Filters State ---
@@ -177,7 +177,7 @@ export function useBreedGridController(): BreedGridControllerReturn {
     filteredCount: filteredBreeds.length,
     desktopBreeds,
     mobileBreeds,
-    favoritesIds,
+    favoritesSet,
     currentPage,
     totalPages,
     pageSize: PAGE_SIZE,

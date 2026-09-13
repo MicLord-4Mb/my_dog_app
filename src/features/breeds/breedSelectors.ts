@@ -3,7 +3,7 @@ import type { RootState } from '@/store';
 import type { DogBreed } from '@/features/breeds/breedSlice';
 import { breedAdapter } from "@/features/breeds/breedSlice";
 import { FAVORITES_GROUP_KEY } from '@/constants/routes';
-import { selectFavoritesIds } from '@/features/favorites/favoritesSelectors';
+import { selectFavoritesSet } from '@/features/favorites/favoritesSelectors';
 
 /**
  * Selector for currently selected breed ID.
@@ -96,13 +96,13 @@ export const isBreedInGroup = (breed: DogBreed, group?: string | null): boolean 
 export const selectBreedsByGroup = createSelector(
   [
     selectAllBreedsArray,
-    selectFavoritesIds,
+    selectFavoritesSet,
     (_state: RootState, group?: string | null) => group,
   ],
-  (breeds, favoritesIds, group) => {
+  (breeds, favoritesSet, group) => {
     if (!group || group.toLowerCase() === 'all') return breeds;
     if (group === FAVORITES_GROUP_KEY) {
-      return breeds.filter((b) => favoritesIds.includes(b.id));
+      return breeds.filter((b) => favoritesSet.has(b.id));
     }
     return breeds.filter((b) => isBreedInGroup(b, group));
   }
