@@ -1,4 +1,4 @@
-import type { DogBreed } from '@/features/breeds/breedSlice';
+import type {DogBreed} from "@/types/breed.types";
 
 /**
  * Pure predicate checking whether a breed belongs to a specific group category.

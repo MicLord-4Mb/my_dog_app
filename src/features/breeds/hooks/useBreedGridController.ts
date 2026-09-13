@@ -1,3 +1,4 @@
+import type {DogBreed} from "@/types/breed.types";
 import { useMemo, type RefObject } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
@@ -12,7 +13,7 @@ import { useGalleryFilters } from '@/features/breeds/hooks/useGalleryFilters';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { FAVORITES_GROUP_KEY } from '@/constants/routes';
-import type { DogBreed } from '@/features/breeds/breedSlice';
+
 
 /** Default number of breed items rendered per desktop page and per mobile pagination batch. */
 export const PAGE_SIZE = 8;
