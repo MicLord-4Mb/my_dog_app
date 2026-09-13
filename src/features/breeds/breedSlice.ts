@@ -2,7 +2,7 @@ import type {ApiError} from "@/constants/api";
 import {REQUEST_STATUS} from "@/constants/status";
 import {isBreedInGroup} from "@/features/breeds/breedSelectors";
 import {fetchBreeds} from "@/features/breeds/breedThunks";
-import {createSlice, type PayloadAction} from "@reduxjs/toolkit";
+import {createEntityAdapter, createSlice, type EntityState, type PayloadAction} from "@reduxjs/toolkit";
 
 /**
  * Domain model for a dog breed with full characteristics and physical metrics.
@@ -39,14 +39,6 @@ export interface DogBreed {
 }
 
 /**
- * Generic normalized data structure (O(1) dictionary lookup and ordered IDs array).
- */
-export interface NormalizedData<T> {
-  entities: Record<string, T>;
-  ids: string[];
-}
-
-/**
  * Strongly typed discriminated union representing asynchronous request states.
  */
 export type RequestState<T, E = ApiError> =
@@ -60,10 +52,15 @@ export type RequestState<T, E = ApiError> =
  */
 export interface BreedsState {
   /** Async request lifecycle state containing normalized entities */
-  request: RequestState<NormalizedData<DogBreed>>;
+  request: RequestState<EntityState<DogBreed, string>>;
   /** Active selected breed ID */
   selectedBreedId: string | null;
 }
+
+export const breedAdapter = createEntityAdapter<DogBreed, string>({
+  selectId: (breed) => breed.id,
+  sortComparer: (a, b) => a.name.localeCompare(b.name),
+})
 
 /**
  * Initial Redux state for the breeds feature slice.
@@ -81,20 +78,21 @@ const breedSlice = createSlice({
   name: 'breeds',
   initialState,
   reducers: {
-    selectBreed: (state, action: PayloadAction<string>) => {
+    selectBreed: (state, action: PayloadAction<string | null>) => {
       state.selectedBreedId = action.payload;
     },
-    autoselectFirstInGroup: (state, action: PayloadAction<string>) => {
+    autoselectFirstInGroup: (state, action: PayloadAction<string | null>) => {
       const breedGroup = action.payload;
       const data = state.request.data;
       if (!data) return;
 
-      const matchingBreed = data.ids
-        .map((id) => data.entities[id])
-        .find((breed) => isBreedInGroup(breed, breedGroup));
+      const matchingId = data.ids.find((id) => {
+        const breed = data.entities[id];
+        return breed ? isBreedInGroup(breed, breedGroup) : false;
+      });
 
-      if (matchingBreed) {
-        state.selectedBreedId = matchingBreed.id;
+      if (matchingId) {
+        state.selectedBreedId = matchingId;
       }
     },
   },
@@ -107,21 +105,17 @@ const breedSlice = createSlice({
         }
       })
       .addCase(fetchBreeds.fulfilled, (state, action: PayloadAction<DogBreed[]>) => {
-        const items = action.payload;
-        const entities: Record<string, DogBreed> = {};
-        const ids: string[] = [];
-
-        items.forEach((breed) => {
-          entities[breed.id] = breed;
-          ids.push(breed.id);
-        });
-
         state.request.status = REQUEST_STATUS.SUCCESS;
-        state.request.data = { entities, ids };
         state.request.error = null;
 
-        if (state.selectedBreedId === null && items.length > 0) {
-          state.selectedBreedId = ids[0];
+        const normalizedBreed = breedAdapter.setAll(
+          breedAdapter.getInitialState(),
+          action.payload
+        );
+        state.request.data = normalizedBreed;
+
+        if (state.selectedBreedId === null && normalizedBreed.ids.length > 0) {
+          state.selectedBreedId = normalizedBreed.ids[0];
         }
       })
       .addCase(fetchBreeds.rejected, (state, action) => {
