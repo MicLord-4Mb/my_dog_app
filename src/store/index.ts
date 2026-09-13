@@ -27,3 +27,10 @@ export const store = configureStore({
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+
+/**
+ * An interesting pattern:
+ * const select = <T>(selector: (state: RootState) => T): T => selector(store.getState());
+ *
+ * Example: select(selectBreedsRequestStatus) === REQUEST_STATUS.IDLE
+ */
