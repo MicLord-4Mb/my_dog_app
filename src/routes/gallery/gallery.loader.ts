@@ -4,7 +4,7 @@ import { store } from '@/store';
 import { REQUEST_STATUS } from '@/constants/status';
 import { fetchBreeds } from '@/features/breeds/breedThunks';
 import { LINKS } from '@/constants/routes';
-import { selectBreedsByGroup } from '@/features/breeds/breedSelectors';
+import { selectBreedsByGroup, selectBreedsRequestStatus, selectBreedsError } from '@/features/breeds/breedSelectors';
 
 let activeFetchPromise: Promise<any> | null = null;
 
@@ -17,7 +17,7 @@ let activeFetchPromise: Promise<any> | null = null;
 export const galleryLoader = async () => {
   const state = store.getState();
 
-  if (state.breeds.request.status === REQUEST_STATUS.IDLE) {
+  if (selectBreedsRequestStatus(state) === REQUEST_STATUS.IDLE) {
     if (!activeFetchPromise) {
       activeFetchPromise = store.dispatch(fetchBreeds());
     }
@@ -34,11 +34,12 @@ export const galleryLoader = async () => {
   }
 
   const newState = store.getState();
+  const error = selectBreedsError(newState);
 
-  if (newState.breeds.request.status === REQUEST_STATUS.ERROR) {
+  if (error) {
     throw new Response(
-      newState.breeds.request.error.message || 'Failed to load breeds.',
-      { status: newState.breeds.request.error.code || 500 }
+      error.message || 'Failed to load breeds.',
+      { status: error.code || 500 }
     );
   }
 
