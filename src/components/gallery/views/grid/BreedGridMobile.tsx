@@ -21,7 +21,7 @@ export function BreedGridMobile() {
   const {
     mobileBreeds,
     activeGroup,
-    favoritesIds,
+    favoritesSet,
     handleToggleFavorite,
     filteredCount,
     sentinelRef,
@@ -37,7 +37,7 @@ export function BreedGridMobile() {
             key={breed.id}
             breed={breed}
             to={LINKS.breed(breed.id, activeGroup)}
-            isInFavorites={favoritesIds.includes(breed.id)}
+            isInFavorites={favoritesSet.has(breed.id)}
             onToggleFavorite={() => handleToggleFavorite(breed.id)}
           />
         ))}

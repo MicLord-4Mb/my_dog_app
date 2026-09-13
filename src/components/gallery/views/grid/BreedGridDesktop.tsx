@@ -16,7 +16,7 @@ export function BreedGridDesktop() {
   const {
     desktopBreeds,
     activeGroup,
-    favoritesIds,
+    favoritesSet,
     handleToggleFavorite,
     currentPage,
     totalPages,
@@ -33,7 +33,7 @@ export function BreedGridDesktop() {
             key={breed.id}
             breed={breed}
             to={LINKS.breed(breed.id, activeGroup)}
-            isInFavorites={favoritesIds.includes(breed.id)}
+            isInFavorites={favoritesSet.has(breed.id)}
             onToggleFavorite={() => handleToggleFavorite(breed.id)}
           />
         ))}

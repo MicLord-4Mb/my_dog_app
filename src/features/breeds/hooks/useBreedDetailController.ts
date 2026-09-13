@@ -6,7 +6,7 @@ import {
   selectCurrentBreed,
   selectBreedEntities,
 } from '@/features/breeds/breedSelectors';
-import { selectFavoritesIds } from '@/features/favorites/favoritesSelectors';
+import { selectFavoritesSet } from '@/features/favorites/favoritesSelectors';
 import { FAVORITES_GROUP_KEY } from '@/constants/routes';
 import { useBreedNavigation } from '@/features/breeds/hooks/useBreedNavigation';
 import { useGalleryFilters } from '@/features/breeds/hooks/useGalleryFilters';
@@ -50,7 +50,7 @@ export function useBreedDetailController(): BreedDetailControllerReturn {
   const allBreeds = useAppSelector(selectAllBreedsArray);
   const breedEntities = useAppSelector(selectBreedEntities);
   const selectedBreedFromState = useAppSelector(selectCurrentBreed);
-  const favoritesIds = useAppSelector(selectFavoritesIds);
+  const favoritesSet = useAppSelector(selectFavoritesSet);
   const { group: activeGroup } = useGalleryFilters();
 
   /**
@@ -62,12 +62,12 @@ export function useBreedDetailController(): BreedDetailControllerReturn {
       return breedEntities[id] || null;
     }
     if (activeGroup === FAVORITES_GROUP_KEY) {
-      const firstFavorite = allBreeds.find((b) => favoritesIds.includes(b.id));
+      const firstFavorite = allBreeds.find((b) => favoritesSet.has(b.id));
       if (firstFavorite) return firstFavorite;
       return null;
     }
     return selectedBreedFromState || allBreeds[0] || null;
-  }, [id, breedEntities, allBreeds, selectedBreedFromState, activeGroup, favoritesIds]);
+  }, [id, breedEntities, allBreeds, selectedBreedFromState, activeGroup, favoritesSet]);
 
   // --- Circular Group Navigation ---
   const {

@@ -1,5 +1,5 @@
 import {toggleFavorite} from "@/features/favorites/favoritesSlice";
-import {selectIsBreedInFavorites} from "@/features/favorites/favoritesSelectors";
+import {selectFavoritesSet} from "@/features/favorites/favoritesSelectors";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import React, { useState, useEffect, useRef } from 'react';
 import type { DogBreed } from '@/features/breeds/breedSlice';
@@ -59,7 +59,8 @@ export const BreedCard: React.FC<BreedCardProps> = ({
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   const dispatch = useAppDispatch();
-  const isInFavorites = useAppSelector(selectIsBreedInFavorites(breed.id));
+  const favoritesSet = useAppSelector(selectFavoritesSet);
+  const isInFavorites = favoritesSet.has(breed.id);
 
   const handleToggleFavorite = () => {
     dispatch(toggleFavorite(breed.id))
