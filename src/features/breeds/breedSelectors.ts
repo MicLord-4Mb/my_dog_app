@@ -1,6 +1,7 @@
 import { createSelector } from 'reselect';
 import type { RootState } from '@/store';
 import type { DogBreed } from '@/features/breeds/breedSlice';
+import { breedAdapter } from "@/features/breeds/breedSlice";
 import { FAVORITES_GROUP_KEY } from '@/constants/routes';
 import { selectFavoritesIds } from '@/features/favorites/favoritesSelectors';
 
@@ -10,29 +11,26 @@ import { selectFavoritesIds } from '@/features/favorites/favoritesSelectors';
 export const selectSelectedBreedId = (state: RootState): string | null =>
   state.breeds.selectedBreedId;
 
-// Referential constants to prevent reselect cache invalidation when request.data is null
-const EMPTY_ENTITIES: Record<string, DogBreed> = {};
-const EMPTY_IDS: string[] = [];
+const breedsAdapterSelectors = breedAdapter.getSelectors<RootState>(
+  (state) => state.breeds.request.data ?? breedAdapter.getInitialState()
+);
+
+export const selectBreedById = breedsAdapterSelectors.selectById;
 
 /**
  * Selector extracting normalized dictionary entities from store.
  */
-export const selectBreedEntities = (state: RootState): Record<string, DogBreed> =>
-  state.breeds.request.data?.entities || EMPTY_ENTITIES;
+export const selectBreedEntities = breedsAdapterSelectors.selectEntities;
 
 /**
  * Selector extracting ordered array of breed IDs from store.
  */
-export const selectBreedIds = (state: RootState): string[] =>
-  state.breeds.request.data?.ids || EMPTY_IDS;
+export const selectBreedIds = breedsAdapterSelectors.selectIds;
 
 /**
  * Memoized selector: Reconstructs array of all breed objects from normalized entities and ids.
  */
-export const selectAllBreedsArray = createSelector(
-  [selectBreedEntities, selectBreedIds],
-  (entities, ids) => ids.map((id) => entities[id])
-);
+export const selectAllBreedsArray = breedsAdapterSelectors.selectAll;
 
 /**
  * Memoized selector: Retrieves currently active `DogBreed` entity or `null`.
