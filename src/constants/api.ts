@@ -7,14 +7,3 @@ export const API_ENDPOINTS = {
 } as const;
 
 export type ApiEndpoint = (typeof API_ENDPOINTS)[keyof typeof API_ENDPOINTS];
-
-/**
- * Typed API error response.
- */
-export interface ApiError {
-  /** Error message */
-  message: string;
-  /** Optional HTTP status code */
-  code?: number;
-}
-
