@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useState } from 'react';
 import type { DogBreed } from "@/types/breed.types";
 import { Card } from '@/components/ui/card';
-import { BreedHeroImage } from '@/components/gallery/cards/BreedHeroImage';
+import { BreedHero } from '@/components/gallery/cards/hero';
 
 const STYLES = {
   cardContainer: "w-full md:rounded-3xl border-secondary-fixed/50 shadow-md overflow-hidden hover:shadow-xl transition-all duration-300",
@@ -28,9 +28,7 @@ export const BreedCard = ({
   prevBreedName,
   nextBreedName,
   positionText,
-}:BreedCardProps) => {
-  const [imgError, setImgError] = useState(false);
-  const [fitMode, setFitMode] = useState<'cover' | 'contain'>('cover');
+}: BreedCardProps) => {
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   const dispatch = useAppDispatch();
@@ -41,29 +39,23 @@ export const BreedCard = ({
     dispatch(toggleFavorite(breed.id))
   }
 
-  const imageUrl = breed.imageUrl;
-  const showPlaceholder = !imageUrl || imgError;
-
   return (
     <>
       <Card className={STYLES.cardContainer}>
-        <BreedHeroImage
-          breedName={breed.name}
-          breedGroup={breed.breedGroup || 'Purebred'}
-          imageUrl={imageUrl || ''}
-          showPlaceholder={showPlaceholder}
-          onImageError={() => setImgError(true)}
-          onLightboxOpen={() => setIsLightboxOpen(true)}
-          fitMode={fitMode}
-          onToggleFitMode={() => setFitMode((prev) => (prev === 'cover' ? 'contain' : 'cover'))}
-          isInFavorites={isInFavorites}
-          onToggleFavorite={handleToggleFavorite}
-          onPrev={onPrev}
-          onNext={onNext}
-          prevBreedName={prevBreedName}
-          nextBreedName={nextBreedName}
-          positionText={positionText}
-        />
+        <BreedHero breed={breed} onLightboxOpen={() => setIsLightboxOpen(true)}>
+          <BreedHero.Media />
+          <BreedHero.Navigation
+            onPrev={onPrev}
+            onNext={onNext}
+            prevBreedName={prevBreedName}
+            nextBreedName={nextBreedName}
+          />
+          <BreedHero.Badges positionText={positionText} />
+          <BreedHero.Toolbar
+            isInFavorites={isInFavorites}
+            onToggleFavorite={handleToggleFavorite}
+          />
+        </BreedHero>
 
         <BreedCardContent breed={breed} />
       </Card>
@@ -72,7 +64,7 @@ export const BreedCard = ({
         breed={breed}
         isOpen={isLightboxOpen}
         onClose={() => setIsLightboxOpen(false)}
-        />
+      />
     </>
   );
 };
