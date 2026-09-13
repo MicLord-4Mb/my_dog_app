@@ -2,7 +2,7 @@ import {toggleFavorite} from "@/features/favorites/favoritesSlice";
 import {selectFavoritesSet} from "@/features/favorites/favoritesSelectors";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import React, { useState, useEffect, useRef } from 'react';
-import type { DogBreed } from '@/features/breeds/breedSlice';
+import type {DogBreed} from "@/types/breed.types";
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { BreedHeroImage } from '@/components/gallery/cards/BreedHeroImage';

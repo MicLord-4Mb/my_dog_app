@@ -1,5 +1,5 @@
+import type { DogBreed } from "@/types/breed.types";
 import type { DogBreedDto } from '@/api/dto/dogBreed.dto';
-import type { DogBreed } from '@/features/breeds/breedSlice';
 
 /**
  * Maps raw API DTO to strongly-typed domain model `DogBreed`.

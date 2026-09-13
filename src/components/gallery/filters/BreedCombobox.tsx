@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { DogBreed } from '@/features/breeds/breedSlice';
+import type {DogBreed} from "@/types/breed.types";
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
   Command,

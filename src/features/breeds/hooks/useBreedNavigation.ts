@@ -1,10 +1,11 @@
 import { useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import {type DogBreed, selectBreed} from '@/features/breeds/breedSlice';
+import { selectBreed } from '@/features/breeds/breedSlice';
 import { selectBreedsByGroup } from '@/features/breeds/breedSelectors';
-import {LINKS} from '@/constants/routes';
+import { LINKS } from '@/constants/routes';
 import { useGalleryFilters } from '@/features/breeds/hooks/useGalleryFilters';
+import type { DogBreed } from "@/types/breed.types";
 
 /**
  * Options for the `useBreedNavigation` custom hook.

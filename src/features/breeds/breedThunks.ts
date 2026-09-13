@@ -1,8 +1,8 @@
 import {fetchBreedsApi} from "@/api/dogApi";
-import type {ApiError} from "@/constants/api";
 import {REQUEST_STATUS} from "@/constants/status";
-import type {DogBreed} from "@/features/breeds/breedSlice";
 import type {RootState} from "@/store";
+import type {ApiError} from "@/types/api.types";
+import type {DogBreed} from "@/types/breed.types";
 import {createAsyncThunk} from "@reduxjs/toolkit";
 import axios from "axios";
 
@@ -14,8 +14,7 @@ export const fetchBreeds = createAsyncThunk<
   'breeds/fetchBreeds',
   async (_, { rejectWithValue }) => {
     try {
-      const data = await fetchBreedsApi();
-      return data;
+      return await fetchBreedsApi();
     } catch (e:unknown) {
       if (axios.isAxiosError(e)) {
         return rejectWithValue({

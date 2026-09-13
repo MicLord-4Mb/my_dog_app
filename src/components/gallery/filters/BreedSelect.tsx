@@ -1,3 +1,4 @@
+import {isBreedInGroup} from "@/lib/breedUtils";
 import React from 'react';
 import { useNavigate } from 'react-router';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -7,7 +8,6 @@ import {
   selectUniqueBreedGroups,
   selectCurrentBreed,
   selectBreedsByGroup,
-  isBreedInGroup,
 } from '@/features/breeds/breedSelectors';
 import { LINKS } from '@/constants/routes';
 import { selectFavoritesCount, selectFavoritesSet } from '@/features/favorites/favoritesSelectors';
