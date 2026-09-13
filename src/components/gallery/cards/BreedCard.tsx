@@ -1,9 +1,10 @@
-import {BreedCardContent} from "@/components/gallery/cards/BreedCardContent";
-import {toggleFavorite} from "@/features/favorites/favoritesSlice";
-import {selectFavoritesSet} from "@/features/favorites/favoritesSelectors";
-import {useAppDispatch, useAppSelector} from "@/store/hooks";
-import { useState, useEffect, useRef } from 'react';
-import type {DogBreed} from "@/types/breed.types";
+import { BreedCardContent } from "@/components/gallery/cards/BreedCardContent";
+import { BreedLightbox } from "@/components/gallery/cards/BreedLightbox";
+import { toggleFavorite } from "@/features/favorites/favoritesSlice";
+import { selectFavoritesSet } from "@/features/favorites/favoritesSelectors";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { useState } from 'react';
+import type { DogBreed } from "@/types/breed.types";
 import { Card } from '@/components/ui/card';
 import { BreedHeroImage } from '@/components/gallery/cards/BreedHeroImage';
 
@@ -24,13 +25,13 @@ const STYLES = {
   // circularProgressBg: "text-surface-container-high",
   // circularProgressFg: "text-primary",
   // circularProgressText: "absolute inset-0 flex items-center justify-center font-headline text-base font-bold text-on-surface",
-  lightboxDialog: "fixed inset-0 m-auto p-4 sm:p-6 bg-transparent max-w-5xl max-h-[90vh] backdrop:bg-black/85 backdrop:backdrop-blur-md border-0 outline-none select-none overflow-hidden",
-  lightboxWrapper: "relative flex flex-col items-center justify-center max-w-full max-h-full",
-  lightboxCloseBtn: "fixed top-4 right-4 sm:top-6 sm:right-6 z-50 w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center text-white/80 hover:text-white bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white",
-  lightboxImage: "max-h-[75vh] sm:max-h-[78vh] w-auto max-w-full rounded-2xl shadow-2xl object-contain",
-  lightboxTitleArea: "mt-3 text-center text-white",
-  lightboxTitle: "font-headline font-bold text-lg sm:text-xl",
-  lightboxGroupText: "text-xs sm:text-sm text-white/70",
+  // lightboxDialog: "fixed inset-0 m-auto p-4 sm:p-6 bg-transparent max-w-5xl max-h-[90vh] backdrop:bg-black/85 backdrop:backdrop-blur-md border-0 outline-none select-none overflow-hidden",
+  // lightboxWrapper: "relative flex flex-col items-center justify-center max-w-full max-h-full",
+  // lightboxCloseBtn: "fixed top-4 right-4 sm:top-6 sm:right-6 z-50 w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center text-white/80 hover:text-white bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white",
+  // lightboxImage: "max-h-[75vh] sm:max-h-[78vh] w-auto max-w-full rounded-2xl shadow-2xl object-contain",
+  // lightboxTitleArea: "mt-3 text-center text-white",
+  // lightboxTitle: "font-headline font-bold text-lg sm:text-xl",
+  // lightboxGroupText: "text-xs sm:text-sm text-white/70",
 };
 
 interface BreedCardProps {
@@ -53,7 +54,6 @@ export const BreedCard = ({
   const [imgError, setImgError] = useState(false);
   const [fitMode, setFitMode] = useState<'cover' | 'contain'>('cover');
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
-  const dialogRef = useRef<HTMLDialogElement>(null);
 
   const dispatch = useAppDispatch();
   const favoritesSet = useAppSelector(selectFavoritesSet);
@@ -62,15 +62,6 @@ export const BreedCard = ({
   const handleToggleFavorite = () => {
     dispatch(toggleFavorite(breed.id))
   }
-
-  useEffect(() => {
-    const dialog = dialogRef.current;
-    if (isLightboxOpen) {
-      dialog?.showModal();
-    } else {
-      dialog?.close();
-    }
-  }, [isLightboxOpen]);
 
   const imageUrl = breed.imageUrl;
   const showPlaceholder = !imageUrl || imgError;
@@ -159,32 +150,37 @@ export const BreedCard = ({
         {/*</CardContent>*/}
       </Card>
 
-      {imageUrl && (
-        <dialog
-          ref={dialogRef}
-          onClose={() => setIsLightboxOpen(false)}
-          onClick={(e) => {
-            if (e.target === dialogRef.current) setIsLightboxOpen(false);
-          }}
-          className={STYLES.lightboxDialog}
-        >
-          <div className={STYLES.lightboxWrapper}>
-            <button
-              type="button"
-              onClick={() => setIsLightboxOpen(false)}
-              className={STYLES.lightboxCloseBtn}
-              aria-label="Close"
-            >
-              <span className="material-symbols-outlined text-[24px]">close</span>
-            </button>
-            <img src={imageUrl} alt={breed.name} className={STYLES.lightboxImage} />
-            <div className={STYLES.lightboxTitleArea}>
-              <h3 className={STYLES.lightboxTitle}>{breed.name}</h3>
-              {breed.breedGroup && <p className={STYLES.lightboxGroupText}>{breed.breedGroup}</p>}
-            </div>
-          </div>
-        </dialog>
-      )}
+      <BreedLightbox
+        breed={breed}
+        isOpen={isLightboxOpen}
+        onClose={() => setIsLightboxOpen(false)}
+        />
+      {/*{imageUrl && (*/}
+      {/*  <dialog*/}
+      {/*    ref={dialogRef}*/}
+      {/*    onClose={() => setIsLightboxOpen(false)}*/}
+      {/*    onClick={(e) => {*/}
+      {/*      if (e.target === dialogRef.current) setIsLightboxOpen(false);*/}
+      {/*    }}*/}
+      {/*    className={STYLES.lightboxDialog}*/}
+      {/*  >*/}
+      {/*    <div className={STYLES.lightboxWrapper}>*/}
+      {/*      <button*/}
+      {/*        type="button"*/}
+      {/*        onClick={() => setIsLightboxOpen(false)}*/}
+      {/*        className={STYLES.lightboxCloseBtn}*/}
+      {/*        aria-label="Close"*/}
+      {/*      >*/}
+      {/*        <span className="material-symbols-outlined text-[24px]">close</span>*/}
+      {/*      </button>*/}
+      {/*      <img src={imageUrl} alt={breed.name} className={STYLES.lightboxImage} />*/}
+      {/*      <div className={STYLES.lightboxTitleArea}>*/}
+      {/*        <h3 className={STYLES.lightboxTitle}>{breed.name}</h3>*/}
+      {/*        {breed.breedGroup && <p className={STYLES.lightboxGroupText}>{breed.breedGroup}</p>}*/}
+      {/*      </div>*/}
+      {/*    </div>*/}
+      {/*  </dialog>*/}
+      {/*)}*/}
     </>
   );
 };
