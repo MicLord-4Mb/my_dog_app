@@ -1,4 +1,3 @@
-import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cva, type VariantProps } from 'class-variance-authority';
@@ -83,7 +82,7 @@ interface BreedHeroImageProps extends VariantProps<typeof heroImageVariants> {
   fitMode: 'cover' | 'contain';
 }
 
-export const BreedHeroImage: React.FC<BreedHeroImageProps> = ({
+export const BreedHeroImage = ({
   breedName,
   breedGroup,
   imageUrl,
@@ -99,7 +98,7 @@ export const BreedHeroImage: React.FC<BreedHeroImageProps> = ({
   prevBreedName,
   nextBreedName,
   positionText,
-}) => {
+}:BreedHeroImageProps ) => {
   return (
     <div className={STYLES.container}>
       {showPlaceholder ? (
