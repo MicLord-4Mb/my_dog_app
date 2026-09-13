@@ -1,6 +1,6 @@
 import type {ApiError} from "@/constants/api";
 import {REQUEST_STATUS} from "@/constants/status";
-import {isBreedInGroup} from "@/features/breeds/breedSelectors";
+import {isBreedInGroup} from "@/lib/breedUtils";
 import {fetchBreeds} from "@/features/breeds/breedThunks";
 import {createEntityAdapter, createSlice, type EntityState, type PayloadAction} from "@reduxjs/toolkit";
 
