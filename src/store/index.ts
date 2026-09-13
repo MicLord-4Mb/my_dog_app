@@ -1,4 +1,4 @@
-import breedReducer from "@/features/breeds/breedReducer";
+import breedReducer from "@/features/breeds/breedSlice";
 import {configureStore} from "@reduxjs/toolkit";
 import favoritesReducer from "@/features/favorites/favoritesSlice";
 

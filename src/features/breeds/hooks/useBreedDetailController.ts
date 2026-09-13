@@ -10,7 +10,7 @@ import { selectFavoritesIds } from '@/features/favorites/favoritesSelectors';
 import { FAVORITES_GROUP_KEY } from '@/constants/routes';
 import { useBreedNavigation } from '@/features/breeds/hooks/useBreedNavigation';
 import { useGalleryFilters } from '@/features/breeds/hooks/useGalleryFilters';
-import type { DogBreed } from '@/types/dog';
+import type { DogBreed } from '@/features/breeds/breedSlice';
 
 /**
  * Return contract for the `useBreedDetailController` hook.

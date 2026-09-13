@@ -1,7 +1,7 @@
 import { redirect } from 'react-router';
 import type { LoaderFunction } from 'react-router';
 import { store } from '@/store';
-import { REQUEST_STATUS } from '@/types/request';
+import { REQUEST_STATUS } from '@/constants/status';
 import { fetchBreeds } from '@/features/breeds/breedThunks';
 import { LINKS } from '@/constants/routes';
 import { selectBreedsByGroup } from '@/features/breeds/breedSelectors';

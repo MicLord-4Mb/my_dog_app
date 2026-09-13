@@ -1,5 +1,5 @@
 import React from 'react';
-import type { DogBreed } from '@/types/dog';
+import type { DogBreed } from '@/features/breeds/breedSlice';
 import { StatCard } from '@/components/gallery/cards/StatCard';
 
 /**
