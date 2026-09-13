@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { selectBreed, autoselectFirstInGroup } from '@/features/breeds/breedActions';
+import { selectBreed, autoselectFirstInGroup } from '@/features/breeds/breedSlice';
 import {
   selectAllBreedsArray,
   selectUniqueBreedGroups,

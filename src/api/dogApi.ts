@@ -2,7 +2,7 @@ import axios from 'axios';
 import { API_ENDPOINTS } from '@/constants/api';
 import type { DogBreedDto } from '@/api/dto/dogBreed.dto';
 import { mapDogBreedDtoToDomain } from '@/api/mappers/dogBreed.mapper';
-import type { DogBreed } from '@/types/dog';
+import type { DogBreed } from '@/features/breeds/breedSlice';
 
 /** TheDogAPI API key from environment variables */
 const apiKey = import.meta.env.VITE_DOG_API_KEY || '';

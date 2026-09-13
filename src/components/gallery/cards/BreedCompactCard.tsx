@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router';
 import { cva } from 'class-variance-authority';
-import type { DogBreed } from '@/types/dog';
+import type { DogBreed } from '@/features/breeds/breedSlice';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';

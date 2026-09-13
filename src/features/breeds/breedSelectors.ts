@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import type { RootState } from '@/store';
-import type { DogBreed } from '@/types/dog';
+import type { DogBreed } from '@/features/breeds/breedSlice';
 import { FAVORITES_GROUP_KEY } from '@/constants/routes';
 import { selectFavoritesIds } from '@/features/favorites/favoritesSelectors';
 

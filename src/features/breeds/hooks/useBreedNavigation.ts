@@ -1,8 +1,7 @@
 import { useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { selectBreed } from '@/features/breeds/breedActions';
-import type { DogBreed } from '@/types/dog';
+import {type DogBreed, selectBreed} from '@/features/breeds/breedSlice';
 import { selectBreedsByGroup } from '@/features/breeds/breedSelectors';
 import {LINKS} from '@/constants/routes';
 import { useGalleryFilters } from '@/features/breeds/hooks/useGalleryFilters';
