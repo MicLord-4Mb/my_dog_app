@@ -1,4 +1,4 @@
-import {booksReducer} from "@/features/books/booksReducer";
+import {booksReducer} from "@/features/books/booksSlice";
 import breedReducer from "@/features/breeds/breedSlice";
 import { configureStore } from "@reduxjs/toolkit";
 import favoritesReducer from "@/features/favorites/favoritesSlice";
