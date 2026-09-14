@@ -8,5 +8,10 @@ export const mapOpenLibraryBookDtoToDomain = ( dto: OpenLibraryBookDto ):Book =>
     authors: dto.author_name ?? [],
     firstPublishYear: dto.first_publish_year ?? null,
     coverUrl: dto.cover_i ? `https://covers.openlibrary.org/b/id/${dto.cover_i}-M.jpg` : null,
+    editionCount: dto.edition_count ?? null,
+    rating: dto.ratings_average ?? null,
+    subjects: dto.subject ?? [],
+    description: dto.first_sentence?.[0] ?? null,
   }
 }
+

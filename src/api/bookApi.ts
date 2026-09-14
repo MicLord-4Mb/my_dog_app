@@ -17,7 +17,7 @@ function buildSearchParams(query: string, mode: SearchMode): Record<string, stri
     const trQuery = query.trim();
     const params: Record<string, string|number> = {
         limit: 15,
-        fields: 'key,author_name,title,first_publish_year,cover_i'
+        fields: 'key,author_name,title,first_publish_year,cover_i,edition_count,ratings_average,subject,first_sentence'
     };
     if (mode === "title"){
         params.title = trQuery;

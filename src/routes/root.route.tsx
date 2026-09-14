@@ -1,5 +1,6 @@
 import type { RouteObject } from 'react-router';
 import { RootErrorBoundary } from '@/components/layout/RootErrorBoundary';
+import { booksRoute } from '@/routes/books/books.route';
 import { favoritesRoute } from '@/routes/favorites/favorites.route';
 import { galleryRoute } from '@/routes/gallery/gallery.route';
 import { homeRoute } from '@/routes/home/home.route';
@@ -25,6 +26,7 @@ export const rootRoute: RouteObject = {
   children: [
     homeRoute,
     galleryRoute,
+    booksRoute,
     favoritesRoute,
     notFoundRoute,
   ],

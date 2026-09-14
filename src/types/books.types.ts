@@ -13,4 +13,8 @@ export type Book = {
     authors: string[];
     firstPublishYear: number|null;
     coverUrl: string|null;
+    editionCount?: number|null;
+    rating?: number|null;
+    subjects?: string[];
+    description?: string|null;
 }
