@@ -1,0 +1,36 @@
+import {loadBreedsAsync} from "@/features/breeds/loadBreeds";
+import {store} from "@/store";
+import type {DogBreed} from "@/types/dog";
+import { REQUEST_STATUS } from '@/types/request.ts';
+import {fetchBreeds} from "@/features/breeds/breedThunks.ts";
+
+/**
+ * Alternative galleryLoader
+ */
+export interface NewGalleryLoaderData {
+  breeds: Promise<DogBreed[]>;
+}
+
+export const newGalleryLoader = (): NewGalleryLoaderData => {
+  return {
+    breeds: loadBreedsAsync(),
+  }
+}
+
+export const galleryLoader = async () => {
+  const state = store.getState();
+
+  if (state.breeds.request.status === REQUEST_STATUS.IDLE) {
+    await store.dispatch(fetchBreeds());
+  }
+
+  const newState = store.getState();
+  if (newState.breeds.request.status === REQUEST_STATUS.ERROR) {
+    throw new Response(
+      newState.breeds.request.error.message || "Failed to load breeds.",
+      { status: newState.breeds.request.error.code || 500}
+    );
+  }
+
+  return null;
+};

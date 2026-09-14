@@ -11,7 +11,7 @@ import {
   isBreedInGroup,
 } from '@/features/breeds/breedSelectors';
 import { autoselectFirstInGroup } from '@/features/breeds/breedActions';
-import { buildBreedPath } from '@/constants/routes';
+import { LINKS } from '@/constants/routes';
 import { useGalleryFilters } from '@/features/breeds/hooks/useGalleryFilters';
 import { GroupFilterChips } from '@/components/gallery/ui/GroupFilterChips';
 import { BreedCombobox } from '@/components/gallery/ui/BreedCombobox';
@@ -66,7 +66,7 @@ export const BreedSelect: React.FC<BreedSelectProps> = ({ variant = 'sidebar' })
    */
   const handleSelect = (id: string) => {
     dispatch(selectBreed(id));
-    navigate(buildBreedPath(id, activeGroup));
+    navigate(LINKS.breed(id, activeGroup));
   };
 
   /**
@@ -82,7 +82,7 @@ export const BreedSelect: React.FC<BreedSelectProps> = ({ variant = 'sidebar' })
 
     if (matchingBreeds.length > 0) {
       const firstBreedId = matchingBreeds[0].id;
-      navigate(buildBreedPath(firstBreedId, group));
+      navigate(LINKS.breed(firstBreedId, group));
     }
   };
 

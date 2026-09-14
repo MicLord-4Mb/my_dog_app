@@ -19,7 +19,7 @@ import { REQUEST_STATUS } from '@/types/request';
  * 3. On success, dispatches `FETCH_FULFILLED` with mapped domain breed entities.
  * 4. On error, performs type-safe inspection of Axios error response and dispatches `FETCH_REJECTED`.
  */
-export const fetchBreeds = (): ThunkAction<void, RootState, unknown, BreedActionTypes> => async (dispatch, getState) => {
+export const fetchBreeds = (): ThunkAction<Promise<void>, RootState, unknown, BreedActionTypes> => async (dispatch, getState) => {
   const { status } = getState().breeds.request;
   if (status === REQUEST_STATUS.LOADING) return;
 

@@ -1,3 +1,6 @@
+import {toggleFavorite} from "@/features/favorites/favoritesActions";
+import {selectIsBreedInFavorites} from "@/features/favorites/favoritesSelectors";
+import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import React, { useState, useEffect, useRef } from 'react';
 import type { DogBreed } from '@/types/dog';
 import { Card, CardContent } from '@/components/ui/card';
@@ -51,10 +54,16 @@ export const BreedCard: React.FC<BreedCardProps> = ({
   positionText,
 }) => {
   const [imgError, setImgError] = useState(false);
-  const [isBookmarked, setIsBookmarked] = useState(false);
   const [fitMode, setFitMode] = useState<'cover' | 'contain'>('cover');
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const dialogRef = useRef<HTMLDialogElement>(null);
+
+  const dispatch = useAppDispatch();
+  const isInFavorites = useAppSelector(selectIsBreedInFavorites(breed.id));
+
+  const handleToggleFavorite = () => {
+    dispatch(toggleFavorite(breed.id))
+  }
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -81,8 +90,8 @@ export const BreedCard: React.FC<BreedCardProps> = ({
           onLightboxOpen={() => setIsLightboxOpen(true)}
           fitMode={fitMode}
           onToggleFitMode={() => setFitMode((prev) => (prev === 'cover' ? 'contain' : 'cover'))}
-          isBookmarked={isBookmarked}
-          onToggleBookmark={() => setIsBookmarked((prev) => !prev)}
+          isInFavorites={isInFavorites}
+          onToggleFavorite={handleToggleFavorite}
           onPrev={onPrev}
           onNext={onNext}
           prevBreedName={prevBreedName}

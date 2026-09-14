@@ -1,17 +1,13 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useParams, useLocation } from 'react-router';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { fetchBreeds } from '@/features/breeds/breedThunks';
-import { selectBreed } from '@/features/breeds/breedActions';
+import { useAppSelector } from '@/store/hooks';
 import { selectAllBreedsArray, selectCurrentBreed, selectBreedEntities } from '@/features/breeds/breedSelectors';
-import { REQUEST_STATUS } from '@/types/request';
 import { BreedSelect } from '@/components/gallery/BreedSelect';
 import { BreedCard } from '@/components/gallery/BreedCard';
 import { BreedGrid } from '@/components/gallery/BreedGrid';
-import { GalleryLoading } from '@/components/gallery/GalleryLoading';
-import { GalleryError } from '@/components/gallery/GalleryError';
 import { GalleryEmpty } from '@/components/gallery/GalleryEmpty';
 import { useBreedNavigation } from '@/features/breeds/hooks/useBreedNavigation';
+import {ROUTES} from "@/constants/routes.ts";
 
 const STYLES = {
   container: "w-full max-w-container-max mx-auto px-4 md:px-8 py-6 md:py-10",
@@ -36,35 +32,35 @@ const STYLES = {
  *    - Multi-column `BreedGrid` with live search, group pills, pagination, and infinite scroll.
  */
 export const GalleryPage: React.FC = () => {
-  const dispatch = useAppDispatch();
+  // const dispatch = useAppDispatch();
   const location = useLocation();
   const { id } = useParams<{ id?: string }>();
 
-  const { request, isRefreshing } = useAppSelector((state) => state.breeds);
+  // const { request, isRefreshing } = useAppSelector((state) => state.breeds);
   const allBreeds = useAppSelector(selectAllBreedsArray);
   const breedEntities = useAppSelector(selectBreedEntities);
   const selectedBreedFromState = useAppSelector(selectCurrentBreed);
 
-  const isGridMode = location.pathname.startsWith('/gallery/grid');
-  const isBreedDetailRoute = Boolean(id);
+  const isGridMode = location.pathname.startsWith(ROUTES.GALLERY_GRID);
+  // const isBreedDetailRoute = Boolean(id);
 
-  // Initial fetch of breeds catalog on mount
-  useEffect(() => {
-    if (request.status === REQUEST_STATUS.IDLE) {
-      dispatch(fetchBreeds());
-    }
-  }, [dispatch, request.status]);
+  // // Initial fetch of breeds catalog on mount
+  // useEffect(() => {
+  //   if (request.status === REQUEST_STATUS.IDLE) {
+  //     dispatch(fetchBreeds());
+  //   }
+  // }, [dispatch, request.status]);
 
-  // Synchronize route URL parameters with Redux state for selected breed
-  useEffect(() => {
-    if (isBreedDetailRoute && id && id !== selectedBreedFromState?.id) {
-      dispatch(selectBreed(id));
-    }
-  }, [id, isBreedDetailRoute, dispatch, selectedBreedFromState?.id]);
+  // // Synchronize route URL parameters with Redux state for selected breed
+  // useEffect(() => {
+  //   if (isBreedDetailRoute && id && id !== selectedBreedFromState?.id) {
+  //     dispatch(selectBreed(id));
+  //   }
+  // }, [id, isBreedDetailRoute, dispatch, selectedBreedFromState?.id]);
 
-  const handleRetry = () => {
-    dispatch(fetchBreeds());
-  };
+  // const handleRetry = () => {
+  //   dispatch(fetchBreeds());
+  // };
 
   const displayBreed = React.useMemo(() => {
     if (id) {
@@ -78,61 +74,63 @@ export const GalleryPage: React.FC = () => {
   });
 
   return (
-    <div className={STYLES.container}>
-      {/* Ambient background glow decoration */}
-      <div className={STYLES.ambientWrapper}>
-        <div className={STYLES.ambientGlowPrimary} />
-        <div className={STYLES.ambientGlowTertiary} />
-      </div>
+    <>
+     {/*<div className={STYLES.container}>*/}
+     {/*  /!* Ambient background glow decoration *!/*/}
+     {/* <div className={STYLES.ambientWrapper}>*/}
+     {/*   <div className={STYLES.ambientGlowPrimary} />*/}
+     {/*   <div className={STYLES.ambientGlowTertiary} />*/}
+     {/*</div>*/}
 
       {/* Main Content States */}
-      {(request.status === REQUEST_STATUS.LOADING && !isRefreshing) && <GalleryLoading />}
+      {/*{(request.status === REQUEST_STATUS.LOADING && !isRefreshing) && <GalleryLoading />}*/}
 
-      {request.status === REQUEST_STATUS.ERROR && (
-        <GalleryError message={request.error?.message || 'Error occurred'} onRetry={handleRetry} />
-      )}
+      {/*{request.status === REQUEST_STATUS.ERROR && (*/}
+      {/*  <GalleryError message={request.error?.message || 'Error occurred'} onRetry={handleRetry} />*/}
+      {/*)}*/}
 
-      {(request.status === REQUEST_STATUS.SUCCESS || isRefreshing) && (
-        <>
-          {isGridMode ? (
-            /* Grid Catalog View */
-            <BreedGrid />
-          ) : (
-            /* Single Breed View */
-            <div className={STYLES.mainLayout}>
-              {/* Mobile Select Header */}
-              <div className={STYLES.mobileSelectWrapper}>
-                <BreedSelect variant="compact" />
-              </div>
+      {/*{(request.status === REQUEST_STATUS.SUCCESS || isRefreshing) && (*/}
+      {/*  <>*/}
 
-              {/* Desktop & Tablet Grid Layout */}
-              <div className={STYLES.desktopGrid}>
-                {/* Desktop Sidebar */}
-                <div className={STYLES.sidebarWrapper}>
-                  <BreedSelect variant="sidebar" />
-                </div>
+      {isGridMode ? (
+        /* Grid Catalog View */
+        <BreedGrid />
+      ) : (
+        /* Single Breed View */
+        <div className={STYLES.mainLayout}>
+          {/* Mobile Select Header */}
+          <div className={STYLES.mobileSelectWrapper}>
+            <BreedSelect variant="compact" />
+          </div>
 
-                {/* Breed Display Area */}
-                <main className={STYLES.mainArea}>
-                  {displayBreed ? (
-                    <BreedCard
-                      key={displayBreed.id}
-                      breed={displayBreed}
-                      onPrev={groupBreeds.length > 1 && prevBreed ? () => handleNavigateBreed(prevBreed) : undefined}
-                      onNext={groupBreeds.length > 1 && nextBreed ? () => handleNavigateBreed(nextBreed) : undefined}
-                      prevBreedName={prevBreed?.name}
-                      nextBreedName={nextBreed?.name}
-                      positionText={groupBreeds.length > 1 && currentIndex !== -1 ? `${currentIndex + 1} / ${groupBreeds.length}` : undefined}
-                    />
-                  ) : (
-                    <GalleryEmpty />
-                  )}
-                </main>
-              </div>
+          {/* Desktop & Tablet Grid Layout */}
+          <div className={STYLES.desktopGrid}>
+            {/* Desktop Sidebar */}
+            <div className={STYLES.sidebarWrapper}>
+              <BreedSelect variant="sidebar" />
             </div>
-          )}
-        </>
+
+            {/* Breed Display Area */}
+            <main className={STYLES.mainArea}>
+              {displayBreed ? (
+                <BreedCard
+                  key={displayBreed.id}
+                  breed={displayBreed}
+                  onPrev={groupBreeds.length > 1 && prevBreed ? () => handleNavigateBreed(prevBreed) : undefined}
+                  onNext={groupBreeds.length > 1 && nextBreed ? () => handleNavigateBreed(nextBreed) : undefined}
+                  prevBreedName={prevBreed?.name}
+                  nextBreedName={nextBreed?.name}
+                  positionText={groupBreeds.length > 1 && currentIndex !== -1 ? `${currentIndex + 1} / ${groupBreeds.length}` : undefined}
+                />
+              ) : (
+                <GalleryEmpty />
+              )}
+            </main>
+          </div>
+        </div>
       )}
-    </div>
+      {/*</>*/}
+    {/*</div>*/}
+    </>
   );
 };
