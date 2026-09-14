@@ -1,46 +1,65 @@
+import {REQUEST_STATUS} from "@/constants/status";
+import {isBreedInGroup} from "@/lib/breedUtils";
 import { createSelector } from 'reselect';
 import type { RootState } from '@/store';
-import type { DogBreed } from '@/types/dog';
+import { breedAdapter } from "@/features/breeds/breedSlice";
+import { FAVORITES_GROUP_KEY } from '@/constants/routes';
+import { selectFavoritesSet } from '@/features/favorites/favoritesSelectors';
 
 /**
- * Base root slice selector for breeds state.
+ * Selector extracting the currently selected breed ID from the store.
+ *
+ * @param state - The root Redux store state.
+ * @returns The unique ID string of the active breed, or `null` if none is selected.
  */
-export const selectBreedsState = (state: RootState) => state.breeds;
+export const selectSelectedBreedId = (state: RootState): string | null =>
+  state.breeds.selectedBreedId;
 
 /**
- * Selector for async request lifecycle state (status, data, error).
+ * Internal entity adapter selector bundle scoped to `state.breeds.request.data`.
+ * Falls back to an empty entity state when data has not yet loaded.
  */
-export const selectBreedsRequest = (state: RootState) => state.breeds.request;
-
-/**
- * Selector for currently selected breed ID.
- */
-export const selectSelectedBreedId = (state: RootState) => state.breeds.selectedBreedId;
-
-// Referential constants to prevent reselect cache invalidation when request.data is null
-const EMPTY_ENTITIES: Record<string, DogBreed> = {};
-const EMPTY_IDS: string[] = [];
-
-/**
- * Selector extracting normalized dictionary entities from store.
- */
-export const selectBreedEntities = (state: RootState) => state.breeds.request.data?.entities || EMPTY_ENTITIES;
-
-/**
- * Selector extracting ordered array of breed IDs from store.
- */
-export const selectBreedIds = (state: RootState) => state.breeds.request.data?.ids || EMPTY_IDS;
-
-/**
- * Memoized selector: Reconstructs array of all breed objects from normalized entities and ids.
- */
-export const selectAllBreedsArray = createSelector(
-  [selectBreedEntities, selectBreedIds],
-  (entities, ids) => ids.map(id => entities[id])
+const breedsAdapterSelectors = breedAdapter.getSelectors<RootState>(
+  (state) => state.breeds.request.data ?? breedAdapter.getInitialState()
 );
 
 /**
- * Memoized selector: Retrieves currently active `DogBreed` entity or `null`.
+ * Entity selector returning a single `DogBreed` entity by its ID.
+ *
+ * @param state - The root Redux store state.
+ * @param id - The unique identifier of the dog breed.
+ * @returns The matching `DogBreed` entity or `undefined` if not found.
+ */
+export const selectBreedById = breedsAdapterSelectors.selectById;
+
+/**
+ * Selector extracting the normalized dictionary mapping breed IDs to `DogBreed` entities.
+ *
+ * @param state - The root Redux store state.
+ * @returns Dictionary of normalized entities indexed by ID.
+ */
+export const selectBreedEntities = breedsAdapterSelectors.selectEntities;
+
+/**
+ * Selector extracting an ordered array of all breed IDs.
+ *
+ * @param state - The root Redux store state.
+ * @returns Array of unique breed identifier strings.
+ */
+export const selectBreedIds = breedsAdapterSelectors.selectIds;
+
+/**
+ * Memoized selector: reconstructs the ordered list of all `DogBreed` entities.
+ *
+ * @param state - The root Redux store state.
+ * @returns Sorted array of all `DogBreed` domain models.
+ */
+export const selectAllBreedsArray = breedsAdapterSelectors.selectAll;
+
+/**
+ * Memoized selector: retrieves the active `DogBreed` entity based on `selectedBreedId`.
+ *
+ * @returns The active `DogBreed` instance or `null` if unselected or not found in entities.
  */
 export const selectCurrentBreed = createSelector(
   [selectBreedEntities, selectSelectedBreedId],
@@ -51,31 +70,35 @@ export const selectCurrentBreed = createSelector(
 );
 
 /**
- * Memoized selector: Computes sorted array of unique breed group names available in the catalog.
+ * Memoized selector: Extracts sorted list of unique breed groups present in the data.
+ *
+ * @returns Alphabetically sorted array of non-empty breed group names.
  */
 export const selectUniqueBreedGroups = createSelector(
   [selectAllBreedsArray],
   (breeds) => {
     const groups = new Set<string>();
-    breeds.forEach((b) => {
-      if (b.breedGroup && b.breedGroup.trim().length > 0) {
-        groups.add(b.breedGroup.trim());
+    breeds.forEach((breed) => {
+      if (breed.breedGroup && breed.breedGroup.trim()) {
+        groups.add(breed.breedGroup.trim());
       }
     });
-    return Array.from(groups).sort();
+    return Array.from(groups).sort((a, b) => a.localeCompare(b));
   }
 );
 
 /**
- * Memoized selector: Computes map of breed group names to count of breeds in each group.
+ * Memoized selector: Computes count of breeds belonging to each unique breed group.
+ *
+ * @returns Mapping of group names to their respective breed count.
  */
 export const selectBreedGroupCounts = createSelector(
   [selectAllBreedsArray],
-  (breeds) => {
+  (breeds): Record<string, number> => {
     const counts: Record<string, number> = {};
-    breeds.forEach((b) => {
-      if (b.breedGroup && b.breedGroup.trim().length > 0) {
-        const group = b.breedGroup.trim();
+    breeds.forEach((breed) => {
+      const group = breed.breedGroup?.trim();
+      if (group) {
         counts[group] = (counts[group] || 0) + 1;
       }
     });
@@ -84,25 +107,44 @@ export const selectBreedGroupCounts = createSelector(
 );
 
 /**
- * Helper predicate checking if a breed belongs to a specified breed group.
- * 
- * @param breed - DogBreed domain entity.
- * @param group - Target breed group name or null/undefined for any group.
- * @returns boolean indicating if the breed matches the group filter.
- */
-export const isBreedInGroup = (breed: DogBreed, group?: string | null): boolean => {
-  if (!group) return true;
-  return breed.breedGroup?.toLowerCase() === group.toLowerCase();
-};
-
-/**
  * Memoized selector: Filters all breeds array by active breed group.
+ * Supports FAVORITES_GROUP_KEY ('favorites') to return favorite breeds.
+ *
+ * @param state - The root Redux store state.
+ * @param [group] - Breed group filter name, 'all', or `FAVORITES_GROUP_KEY`.
+ * @returns Array of breeds matching the target filter.
  */
 export const selectBreedsByGroup = createSelector(
-  [selectAllBreedsArray, (_state: RootState, group?: string | null) => group],
-  (breeds, group) => {
-    if (!group) return breeds;
+  [
+    selectAllBreedsArray,
+    selectFavoritesSet,
+    (_state: RootState, group?: string | null) => group,
+  ],
+  (breeds, favoritesSet, group) => {
+    if (!group || group.toLowerCase() === 'all') return breeds;
+    if (group === FAVORITES_GROUP_KEY) {
+      return breeds.filter((b) => favoritesSet.has(b.id));
+    }
     return breeds.filter((b) => isBreedInGroup(b, group));
   }
 );
 
+/**
+ * Selector retrieving the current lifecycle status of the breeds fetch request.
+ *
+ * @param state - The root Redux store state.
+ * @returns One of the `REQUEST_STATUS` values ('idle', 'loading', 'success', 'error').
+ */
+export const selectBreedsRequestStatus = (state: RootState) =>
+  state.breeds.request.status;
+
+/**
+ * Selector extracting the API error payload if the request failed.
+ *
+ * @param state - The root Redux store state.
+ * @returns `ApiError` details if the request is in the ERROR state; otherwise, `null`.
+ */
+export const selectBreedsError = (state: RootState) =>
+  state.breeds.request.status === REQUEST_STATUS.ERROR
+    ? state.breeds.request.error
+    : null;

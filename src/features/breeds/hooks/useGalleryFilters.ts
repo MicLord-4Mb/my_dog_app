@@ -1,63 +1,67 @@
 import { useSearchParams } from 'react-router';
 
 /**
- * Custom hook to synchronize and manage URL query parameters for gallery filtering.
- * 
- * Manages:
- * - `group`: Active breed group category (`?group=Hound`).
- * - `q`: Search keyword query (`?q=terrier`).
- * - `page`: Current pagination page number (`?page=2`).
- * 
- * Automatically resets `page` back to 1 upon changing group or search query.
- * 
- * @returns Filter values and updater functions.
+ * Return contract for the `useGalleryFilters` custom hook.
  */
-export function useGalleryFilters() {
+export interface GalleryFiltersState {
+  /** Active breed group name or `null` if unselected / all. */
+  group: string | null;
+  /** Current 1-based pagination page index. */
+  currentPage: number;
+  /** Active search query term. */
+  searchQuery: string;
+  /** Updates the active group in URL search params. Resets page to 1. */
+  setGroup: (newGroup: string | null) => void;
+  /** Updates the active search query in URL search params. Resets page to 1. */
+  setSearchQuery: (newQuery: string) => void;
+  /** Updates the active page parameter in URL search params. */
+  setPage: (newPage: number) => void;
+  /** Resets all URL query parameters to their initial default state. */
+  resetFilters: () => void;
+}
+
+/**
+ * Custom React hook that enforces URL as the Single Source of Truth for gallery filtering, searching, and pagination.
+ * 
+ * Synchronizes the UI state directly with browser search parameters (`?group=...&q=...&page=...`).
+ * Changes to group or search query automatically reset the active page index to 1.
+ * 
+ * @returns {GalleryFiltersState} Object containing filter parameters and updater methods.
+ */
+export function useGalleryFilters(): GalleryFiltersState {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const group = searchParams.get('group');
-  const page = parseInt(searchParams.get('page') || '1', 10);
+  const rawGroup = searchParams.get('group');
+  const group = rawGroup && rawGroup.trim() !== '' ? rawGroup : null;
+
+  const rawPage = parseInt(searchParams.get('page') || '1', 10);
+  const currentPage = isNaN(rawPage) || rawPage < 1 ? 1 : rawPage;
+
   const searchQuery = searchParams.get('q') || '';
 
-  const currentPage = isNaN(page) || page < 1 ? 1 : page;
-
-  /**
-   * Sets or clears the active breed group filter in URL search params.
-   * 
-   * @param newGroup - Group name to set or `null` to clear.
-   */
   const setGroup = (newGroup: string | null) => {
     const nextParams = new URLSearchParams(searchParams);
-    if (newGroup) {
-      nextParams.set('group', newGroup);
+    if (newGroup && newGroup.trim() !== '') {
+      nextParams.set('group', newGroup.trim());
     } else {
       nextParams.delete('group');
     }
-    nextParams.delete('page'); // Reset to page 1 on filter change
+    nextParams.delete('page');
     setSearchParams(nextParams);
   };
 
-  /**
-   * Sets or clears the search query string in URL search params.
-   * 
-   * @param newQuery - Keyword string to filter by.
-   */
   const setSearchQuery = (newQuery: string) => {
     const nextParams = new URLSearchParams(searchParams);
-    if (newQuery.trim()) {
-      nextParams.set('q', newQuery.trim());
+    const trimmed = newQuery.trim();
+    if (trimmed) {
+      nextParams.set('q', trimmed);
     } else {
       nextParams.delete('q');
     }
-    nextParams.delete('page'); // Reset to page 1 on search change
+    nextParams.delete('page');
     setSearchParams(nextParams);
   };
 
-  /**
-   * Sets the active page number and smoothly scrolls window to the top.
-   * 
-   * @param newPage - 1-based page index.
-   */
   const setPage = (newPage: number) => {
     const nextParams = new URLSearchParams(searchParams);
     if (newPage > 1) {
@@ -69,12 +73,8 @@ export function useGalleryFilters() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  /**
-   * Resets all search parameters, clearing search, group, and page.
-   */
   const resetFilters = () => {
-    const nextParams = new URLSearchParams();
-    setSearchParams(nextParams);
+    setSearchParams(new URLSearchParams());
   };
 
   return {

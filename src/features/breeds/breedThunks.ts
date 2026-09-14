@@ -1,44 +1,41 @@
-import type { ThunkAction } from 'redux-thunk';
-import axios from 'axios';
-import { fetchBreedsApi } from '@/api/dogApi';
-import type { RootState } from '@/store';
-import type { BreedActionTypes } from '@/features/breeds/breedActionTypes';
-import {
-  fetchBreedsPending,
-  fetchBreedsFulfilled,
-  fetchBreedsRejected,
-} from '@/features/breeds/breedActions';
-import { REQUEST_STATUS } from '@/types/request';
+import {fetchBreedsApi} from "@/api/dogApi";
+import {REQUEST_STATUS} from "@/constants/status";
+import type {RootState} from "@/store";
+import type {ApiError} from "@/types/api.types";
+import type {DogBreed} from "@/types/breed.types";
+import {createAsyncThunk} from "@reduxjs/toolkit";
+import axios from "axios";
 
-/**
- * Asynchronous Redux Thunk action to fetch dog breeds from TheDogAPI.
- * 
- * Flow:
- * 1. Dispatches `FETCH_PENDING` action to set loading state.
- * 2. Invokes Axios API client `fetchBreedsApi()`.
- * 3. On success, dispatches `FETCH_FULFILLED` with mapped domain breed entities.
- * 4. On error, performs type-safe inspection of Axios error response and dispatches `FETCH_REJECTED`.
- */
-export const fetchBreeds = (): ThunkAction<Promise<void>, RootState, unknown, BreedActionTypes> => async (dispatch, getState) => {
-  const { status } = getState().breeds.request;
-  if (status === REQUEST_STATUS.LOADING) return;
+export const fetchBreeds = createAsyncThunk<
+  DogBreed[],
+  void,
+  { state: RootState; rejectValue: ApiError }
+>(
+  'breeds/fetchBreeds',
+  async (_, { rejectWithValue }) => {
+    try {
+      return await fetchBreedsApi();
+    } catch (e:unknown) {
+      if (axios.isAxiosError(e)) {
+        return rejectWithValue({
+          message: e.response?.data?.message || e.message || 'Network error occurred',
+          code: e.response?.status,
+        });
+      }
 
-  dispatch(fetchBreedsPending());
-  try {
-    const data = await fetchBreedsApi();
-    dispatch(fetchBreedsFulfilled(data));
-  } catch (err: unknown) {
-    if (axios.isAxiosError(err)) {
-      dispatch(
-        fetchBreedsRejected({
-          message: err.response?.data?.message || err.message || 'Network error occurred',
-          code: err.response?.status,
-        })
-      );
-    } else if (err instanceof Error) {
-      dispatch(fetchBreedsRejected({ message: err.message }));
-    } else {
-      dispatch(fetchBreedsRejected({ message: 'Failed to load dog breeds' }));
+      if (e instanceof Error) {
+        return rejectWithValue({ message: e.message });
+      }
+
+      return rejectWithValue({ message: 'Failed to load dog breeds' });
     }
+  },
+  {
+    condition: (_, { getState }) => {
+      const { request } = getState().breeds;
+
+      return !(request.status === REQUEST_STATUS.LOADING || request.data !== null);
+    },
   }
-};
+
+)

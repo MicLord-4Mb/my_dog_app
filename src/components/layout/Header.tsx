@@ -1,6 +1,7 @@
-import React from 'react';
-import { NavLink, useLocation } from 'react-router';
-import { ROUTES } from '@/constants/routes';
+import { NavLink, useLocation } from "react-router";
+import { LINKS, ROUTES, FAVORITES_GROUP_KEY } from "@/constants/routes";
+import { useAppSelector } from "@/store/hooks";
+import { selectFavoritesCount } from "@/features/favorites/favoritesSelectors";
 
 const STYLES = {
   header: "fixed top-0 w-full z-50 bg-surface/85 backdrop-blur-xl border-b border-secondary-fixed/30 pt-safe transition-all shadow-[0_1px_8px_rgba(0,0,0,0.04)]",
@@ -11,9 +12,10 @@ const STYLES = {
   brandIcon: "material-symbols-outlined text-on-primary-container text-[22px]",
   brandTitle: "font-headline text-xl md:text-2xl font-bold text-primary tracking-tight",
   desktopNav: "hidden md:flex items-center gap-8 ml-8",
-  navLinkBase: "text-sm font-semibold transition-colors px-2 py-1 rounded-md",
+  navLinkBase: "inline-flex items-center text-sm font-semibold transition-colors px-2 py-1 rounded-md",
   navLinkActive: "text-primary font-bold",
   navLinkInactive: "text-on-secondary-container hover:text-on-surface",
+  favoritesBadge: "ml-1.5 px-1.5 py-0.5 rounded-full text-[11px] font-bold bg-primary/10 text-primary border border-primary/20 leading-none",
   rightActions: "flex items-center gap-3",
   toggleButton: "inline-flex items-center gap-1.5 text-xs font-semibold text-primary bg-primary/10 hover:bg-primary/20 px-3.5 py-1.5 rounded-full transition-colors shadow-2xs",
   toggleIcon: "material-symbols-outlined text-[16px]",
@@ -25,20 +27,26 @@ const STYLES = {
 /**
  * Top navigation Header component:
  * - Brand logo linking to home.
- * - Desktop navigation links (Home, Gallery).
+ * - Desktop navigation links (Home, Gallery, Favorites).
  * - View mode toggle button ("Single View" vs "Explore Breeds").
  * - User profile icon.
  */
-export const Header: React.FC = () => {
+export const Header = () => {
   const location = useLocation();
-  const isGridMode = location.pathname.startsWith('/gallery/grid');
+  const searchParams = new URLSearchParams(location.search);
+  const isFavoritesActive = location.pathname.startsWith(ROUTES.GALLERY) && searchParams.get('group') === FAVORITES_GROUP_KEY;
+  const isGridMode = location.pathname.startsWith(ROUTES.GALLERY_GRID);
+  const favoritesCount = useAppSelector(selectFavoritesCount);
+  const toggleTarget = isGridMode
+    ? `${ROUTES.GALLERY}${location.search || '?group=all'}`
+    : LINKS.grid(searchParams.get('group'));
 
   return (
     <header className={STYLES.header}>
       <div className={STYLES.container}>
         {/* Brand */}
         <div className={STYLES.brandSection}>
-          <NavLink to={ROUTES.HOME} className={STYLES.brandLink}>
+          <NavLink to={LINKS.home()} className={STYLES.brandLink}>
             <div className={STYLES.brandIconWrapper}>
               <span className={STYLES.brandIcon}>pets</span>
             </div>
@@ -50,28 +58,40 @@ export const Header: React.FC = () => {
           {/* Desktop Navigation Links */}
           <nav className={STYLES.desktopNav}>
             <NavLink
-              to={ROUTES.HOME}
+              to={LINKS.home()}
               className={({ isActive }) =>
-                `${STYLES.navLinkBase} ${
-                  isActive
-                    ? STYLES.navLinkActive
-                    : STYLES.navLinkInactive
+                `${STYLES.navLinkBase} ${isActive
+                  ? STYLES.navLinkActive
+                  : STYLES.navLinkInactive
                 }`
               }
             >
               Home
             </NavLink>
             <NavLink
-              to={ROUTES.GALLERY}
+              to={LINKS.gallery()}
               className={({ isActive }) =>
-                `${STYLES.navLinkBase} ${
-                  isActive && !isGridMode
-                    ? STYLES.navLinkActive
-                    : STYLES.navLinkInactive
+                `${STYLES.navLinkBase} ${isActive && !isFavoritesActive
+                  ? STYLES.navLinkActive
+                  : STYLES.navLinkInactive
                 }`
               }
             >
               Gallery
+            </NavLink>
+            <NavLink
+              to={LINKS.favorites()}
+              className={`${STYLES.navLinkBase} ${isFavoritesActive
+                  ? STYLES.navLinkActive
+                  : STYLES.navLinkInactive
+                }`}
+            >
+              <span>Favorites</span>
+              {favoritesCount > 0 && (
+                <span className={STYLES.favoritesBadge}>
+                  {favoritesCount}
+                </span>
+              )}
             </NavLink>
           </nav>
         </div>
@@ -79,7 +99,7 @@ export const Header: React.FC = () => {
         {/* Right action / Mode switch toggle button & user avatar */}
         <div className={STYLES.rightActions}>
           <NavLink
-            to={isGridMode ? ROUTES.GALLERY : ROUTES.GALLERY_GRID}
+            to={toggleTarget}
             className={STYLES.toggleButton}
             title={isGridMode ? "Switch to single breed view" : "Switch to catalog grid view"}
           >
