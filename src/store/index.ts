@@ -1,3 +1,4 @@
+import {booksReducer} from "@/features/books/booksReducer";
 import breedReducer from "@/features/breeds/breedSlice";
 import { configureStore } from "@reduxjs/toolkit";
 import favoritesReducer from "@/features/favorites/favoritesSlice";
@@ -13,6 +14,7 @@ export const store = configureStore({
   reducer: {
     breeds: breedReducer,
     favorites: favoritesReducer,
+    books: booksReducer,
   },
   middleware: (getDefaultMiddleware) => {
     const middlewares = getDefaultMiddleware();
