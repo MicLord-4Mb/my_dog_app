@@ -12,10 +12,10 @@ export const fetchBreeds = createAsyncThunk<
   { state: RootState; rejectValue: ApiError }
 >(
   'breeds/fetchBreeds',
-  async (_, { rejectWithValue }) => {
+  async (_, {rejectWithValue}) => {
     try {
       return await fetchBreedsApi();
-    } catch (e:unknown) {
+    } catch (e: unknown) {
       if (axios.isAxiosError(e)) {
         return rejectWithValue({
           message: e.response?.data?.message || e.message || 'Network error occurred',
@@ -24,18 +24,17 @@ export const fetchBreeds = createAsyncThunk<
       }
 
       if (e instanceof Error) {
-        return rejectWithValue({ message: e.message });
+        return rejectWithValue({message: e.message});
       }
 
-      return rejectWithValue({ message: 'Failed to load dog breeds' });
+      return rejectWithValue({message: 'Failed to load dog breeds'});
     }
   },
   {
-    condition: (_, { getState }) => {
-      const { request } = getState().breeds;
+    condition: (_, {getState}) => {
+      const {request} = getState().breeds;
 
       return !(request.status === REQUEST_STATUS.LOADING || request.data !== null);
     },
   }
-
 )

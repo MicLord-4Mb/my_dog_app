@@ -1,8 +1,9 @@
-import { searchBooks } from "@/api/bookApi";
-import type { RootState } from "@/store";
-import type { ApiError } from "@/types/api.types";
-import type { Book, BookSearchParams } from '@/types/books.types'
-import { createAsyncThunk } from "@reduxjs/toolkit";
+import {searchBooks} from "@/api/bookApi";
+import {REQUEST_STATUS} from "@/constants/status";
+import type {RootState} from "@/store";
+import type {ApiError} from "@/types/api.types";
+import type {Book, BookSearchParams} from '@/types/books.types'
+import {createAsyncThunk} from "@reduxjs/toolkit";
 import axios from "axios";
 
 export const loadBooks = createAsyncThunk<
@@ -11,10 +12,10 @@ export const loadBooks = createAsyncThunk<
   { state: RootState; rejectValue: ApiError }
 >(
   'books/loadBooks',
-  async (params, { rejectWithValue }) => {
+  async (params, {rejectWithValue}) => {
     const trQuery = params.query.trim();
     if (!trQuery) {
-      return rejectWithValue({ message: 'please enter a valid query.' });
+      return rejectWithValue({message: 'please enter a valid query.'});
     }
 
     try {
@@ -28,10 +29,17 @@ export const loadBooks = createAsyncThunk<
       }
 
       if (e instanceof Error) {
-        return rejectWithValue({ message: e.message });
+        return rejectWithValue({message: e.message});
       }
 
-      return rejectWithValue({ message: 'Failed to load books.' });
+      return rejectWithValue({message: 'Failed to load books.'});
     }
-  }
-)
+  },
+  {
+    condition: (_, {getState}) => {
+      const {request} = getState().books;
+
+      return !(request.status === REQUEST_STATUS.LOADING || request.data !== null);
+    },
+  })
+
