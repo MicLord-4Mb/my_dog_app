@@ -1,10 +1,16 @@
 import {REQUEST_STATUS} from "@/constants/status";
-import {selectBookByKey, selectBooksList, selectBooksStatus, selectSelectedBook} from "@/features/books/booksSelectors";
+import {
+  selectBookByKey,
+  selectBooksError,
+  selectBooksList,
+  selectBooksStatus,
+} from "@/features/books/booksSelectors";
+import {resetBooks} from "@/features/books/booksSlice";
 import {loadBooks} from "@/features/books/booksThunks";
 import {parseBookSearchParams} from "@/lib/booksUtils";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import type {SearchMode} from "@/types/books.types";
-import {useCallback, useEffect, useRef} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import {useSearchParams} from "react-router";
 
 
@@ -18,13 +24,27 @@ export function useBooksController() {
   // get store data
   const books = useAppSelector(selectBooksList);
   const status = useAppSelector(selectBooksStatus);
+  const error = useAppSelector(selectBooksError);
   const selectedBook = useAppSelector((state) => selectBookByKey(state, bookId || null));
+
+  // Draft for submit form
+  const [draftQuery, setDraftQuery] = useState(query);
+  const [draftMode, setDraftMode] = useState<SearchMode>(mode);
+
+  // synchronization of URLs and search parameters
+  useEffect(() => {
+    setDraftQuery(query);
+    setDraftMode(mode);
+  }, [query, mode]);
 
   const prevSearchRef = useRef<{ query: string; mode: SearchMode } | null>(null);
 
   // query and mode monitoring for changes
   useEffect(() => {
-    if (!hasSearchCriteria) return;
+    if (!hasSearchCriteria) {
+      prevSearchRef.current = null;
+      return;
+    }
 
     const prev = prevSearchRef.current;
     if (prev && prev.query === query && prev.mode === mode) {
@@ -35,7 +55,7 @@ export function useBooksController() {
     dispatch(loadBooks({ query, mode }));
   }, [dispatch, query, mode, hasSearchCriteria]);
 
-  // quick & dirty - checkout code -> book select in list logic
+  // quick & dirty - checkout code -> book autoselect in list logic
   useEffect(() => {
     if (status !== REQUEST_STATUS.SUCCESS || books.length === 0) return;
 
@@ -61,27 +81,52 @@ export function useBooksController() {
     }, [setSearchParams]
   );
 
-  const handleSearchSubmit = useCallback(
-    (newQuery: string, newMode: SearchMode) => {
-      setSearchParams((prev) => {
+  const handleSearchSubmit = useCallback(() => {
+    const trQuery = draftQuery.trim().toLowerCase();
+    if (!trQuery) return;
+
+    setSearchParams((prev) => {
         const next = new URLSearchParams(prev);
-        next.set('q', newQuery.trim());
-        next.set('mode', newMode);
+        next.set('q', trQuery.trim());
+        next.set('mode', draftMode);
         next.delete('book');
         return next;
       });
-    }, [setSearchParams]
+    }, [draftQuery, draftMode, setSearchParams]
   );
 
+  const handleReset = useCallback(()=> {
+    setDraftQuery('');
+    prevSearchRef.current = null;
+    dispatch(resetBooks());
+    setSearchParams({}, { replace: true });
+  }, [dispatch, setSearchParams]);
+
+  const handleRetry = useCallback(()=> {
+    if (query) {
+      dispatch(loadBooks({ query, mode }));
+    }
+  }, [dispatch, query, mode]);
+
   return {
-    query,
-    mode,
+    // for the form
+    draftQuery,
+    draftMode,
+    setDraftQuery,
+    setDraftMode,
+
+    // data & state
     bookId,
     books,
     selectedBook,
     status,
+    error,
     hasSearchCriteria,
+
+    // handle function
     handleSelectBook,
     handleSearchSubmit,
+    handleReset,
+    handleRetry,
   };
 }
