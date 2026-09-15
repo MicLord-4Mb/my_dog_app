@@ -1,5 +1,5 @@
-import {buildBooksSearchUrl} from "@/lib/booksUtils";
-import type {SearchMode} from "@/types/books.types";
+import { buildBooksSearchUrl } from "@/lib/booksUtils";
+import { SEARCH_MODE, type SearchMode } from "@/types/books.types";
 
 /**
  * Individual URL path segment constants.
@@ -70,8 +70,8 @@ export const LINKS = {
 
   books: () => ROUTES.BOOKS,
 
-  search: (query = '', mode?: SearchMode, bookId?: string | null)  =>
-    buildBooksSearchUrl({query, mode, bookId}),
+  search: (query = '', mode: SearchMode = SEARCH_MODE.ALL, bookId?: string | null) =>
+    buildBooksSearchUrl({ query, mode, bookId }),
 } as const;
 
 export type AppUrl = ReturnType<(typeof LINKS)[keyof typeof LINKS]>;

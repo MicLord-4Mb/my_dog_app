@@ -24,7 +24,7 @@ export const selectBooksList = (state: RootState) => state.books.request.data;
 export const selectBookByKey = createSelector(
   [selectBooksList, (_: RootState, key: string| null) => key],
   (books, key): Book | null => {
-    if (!books.length || !key) return null;
+    if (!books || !books.length || !key) return null;
     return books.find((b) => b.key === key) ?? null;
   }
 );

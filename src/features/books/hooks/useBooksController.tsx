@@ -22,7 +22,7 @@ export function useBooksController() {
   const { query, mode, bookId, hasSearchCriteria } = parseBookSearchParams(searchParams);
 
   // get store data
-  const books = useAppSelector(selectBooksList);
+  const books = useAppSelector(selectBooksList) || [];
   const status = useAppSelector(selectBooksStatus);
   const error = useAppSelector(selectBooksError);
   const selectedBook = useAppSelector((state) => selectBookByKey(state, bookId || null));
