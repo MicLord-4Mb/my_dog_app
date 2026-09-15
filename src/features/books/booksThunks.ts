@@ -39,7 +39,7 @@ export const loadBooks = createAsyncThunk<
     condition: (_, {getState}) => {
       const {request} = getState().books;
 
-      return !(request.status === REQUEST_STATUS.LOADING || request.data !== null);
+      return request.status !== REQUEST_STATUS.LOADING;
     },
   })
 
