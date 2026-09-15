@@ -1,3 +1,4 @@
+import {isValidSearchMode} from "@/lib/booksUtils";
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router';
 import { Loader2 } from 'lucide-react';
@@ -20,7 +21,7 @@ import {
 import { BookSearchForm } from '@/components/books/BookSearchForm';
 import { BookList } from '@/components/books/BookList';
 import { BookCard } from '@/components/books/BookCard';
-import type { SearchMode } from '@/types/books.types';
+import {SEARCH_MODE, type SearchMode} from '@/types/books.types';
 
 const STYLES = {
   container: 'relative w-full max-w-container-max mx-auto px-4 md:px-8 pt-6 pb-12 overflow-hidden',
@@ -41,10 +42,6 @@ const STYLES = {
   resultsGrid: 'grid grid-cols-1 lg:grid-cols-12 gap-8 items-start',
 };
 
-const VALID_MODES: SearchMode[] = ['all', 'title', 'author'];
-const isValidMode = (v: string | null): v is SearchMode =>
-  v !== null && VALID_MODES.includes(v as SearchMode);
-
 export const BooksPage = () => {
   const dispatch = useAppDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -61,7 +58,7 @@ export const BooksPage = () => {
   useEffect(() => {
     const urlQuery = searchParams.get('q') ?? '';
     const urlModeRaw = searchParams.get('mode');
-    const urlMode: SearchMode = isValidMode(urlModeRaw) ? urlModeRaw : 'all';
+    const urlMode: SearchMode = isValidSearchMode(urlModeRaw) ? urlModeRaw : SEARCH_MODE.ALL;
 
     if (!urlQuery.trim()) return;
 

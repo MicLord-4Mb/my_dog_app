@@ -1,6 +1,10 @@
-// export type RequestStatus = 'success' | 'idle' | 'loading' | 'error';
+export const SEARCH_MODE = {
+    ALL: 'all',
+    TITLE: 'title',
+    AUTHOR: 'author',
+} as const;
 
-export type SearchMode = 'all'|'title'|'author';
+export type SearchMode = (typeof SEARCH_MODE)[keyof typeof SEARCH_MODE];
 
 export type BookSearchParams = {
     query: string;

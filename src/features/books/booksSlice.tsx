@@ -1,6 +1,6 @@
 import {REQUEST_STATUS} from "@/constants/status";
 import {loadBooks} from "@/features/books/booksThunks";
-import type {Book, SearchMode} from "@/types/books.types";
+import {type Book, SEARCH_MODE, type SearchMode} from "@/types/books.types";
 import type {RequestState} from "@/types/request.types";
 import {createSlice, type PayloadAction} from "@reduxjs/toolkit";
 
@@ -13,8 +13,7 @@ export interface BooksState {
 
 const initialState: BooksState = {
   query: '',
-  // TODO: change search mode constants
-  mode: 'all',
+  mode: SEARCH_MODE.ALL,
   request: {
     status: REQUEST_STATUS.IDLE,
     data: null,

@@ -1,10 +1,10 @@
 import {mapOpenLibraryBookDtoToDomain} from "@/api/mappers/libBook.mapper";
 import type {OpenLibrarySearchResponse} from "@/types/api.types";
 import axios from "axios";
-import type {
-    Book,
-    BookSearchParams,
-    SearchMode
+import {
+    type Book,
+    type BookSearchParams, SEARCH_MODE,
+    type SearchMode
 } from '@/types/books.types';
 
 
@@ -19,11 +19,11 @@ function buildSearchParams(query: string, mode: SearchMode): Record<string, stri
         limit: 15,
         fields: 'key,author_name,title,first_publish_year,cover_i,edition_count,ratings_average,subject,first_sentence'
     };
-    if (mode === "title"){
+    if (mode === SEARCH_MODE.TITLE){
         params.title = trQuery;
         return params;
     }
-    if (mode === "author"){
+    if (mode === SEARCH_MODE.AUTHOR){
         params.author = trQuery;
         return params;
     }
