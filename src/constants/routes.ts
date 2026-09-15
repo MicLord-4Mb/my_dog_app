@@ -1,3 +1,4 @@
+import {buildBooksSearchUrl} from "@/lib/booksUtils";
 import type {SearchMode} from "@/types/books.types";
 
 /**
@@ -69,8 +70,8 @@ export const LINKS = {
 
   books: () => ROUTES.BOOKS,
 
-  search: (query?: string, mode?: SearchMode, bookId?: string | null)  =>
-    `${ROUTES.SEARCH}?q=${encodeURIComponent(query || '')}&mode=${encodeURIComponent(mode || '')}&selected=${encodeURIComponent(bookId || '')}` as const,
+  search: (query = '', mode?: SearchMode, bookId?: string | null)  =>
+    buildBooksSearchUrl({query, mode, bookId}),
 } as const;
 
 export type AppUrl = ReturnType<(typeof LINKS)[keyof typeof LINKS]>;

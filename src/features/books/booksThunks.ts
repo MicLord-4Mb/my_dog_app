@@ -2,13 +2,13 @@ import {searchBooks} from "@/api/bookApi";
 import {REQUEST_STATUS} from "@/constants/status";
 import type {RootState} from "@/store";
 import type {ApiError} from "@/types/api.types";
-import type {Book, BookSearchParams} from '@/types/books.types'
+import type {Book, BooksSearchParams} from '@/types/books.types'
 import {createAsyncThunk} from "@reduxjs/toolkit";
 import axios from "axios";
 
 export const loadBooks = createAsyncThunk<
   Book[],
-  BookSearchParams,
+  BooksSearchParams,
   { state: RootState; rejectValue: ApiError }
 >(
   'books/loadBooks',

@@ -6,7 +6,7 @@ export const SEARCH_MODE = {
 
 export type SearchMode = (typeof SEARCH_MODE)[keyof typeof SEARCH_MODE];
 
-export type BookSearchParams = {
+export interface BooksSearchParams {
     query: string;
     mode: SearchMode;
 }
@@ -21,4 +21,12 @@ export type Book = {
     rating?: number|null;
     subjects?: string[];
     description?: string|null;
+}
+
+export interface BuildBooksSearchUrlParams extends BooksSearchParams {
+    bookId?: string|null;
+}
+
+export interface ParsedBooksSearchParams extends BuildBooksSearchUrlParams {
+    hasSearchCriteria: boolean;
 }

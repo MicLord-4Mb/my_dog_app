@@ -3,7 +3,7 @@ import type {OpenLibrarySearchResponse} from "@/types/api.types";
 import axios from "axios";
 import {
     type Book,
-    type BookSearchParams, SEARCH_MODE,
+    type BooksSearchParams, SEARCH_MODE,
     type SearchMode
 } from '@/types/books.types';
 
@@ -31,7 +31,7 @@ function buildSearchParams(query: string, mode: SearchMode): Record<string, stri
     return params;
 }
 
-export async function searchBooks(params: BookSearchParams): Promise<Book[]> {
+export async function searchBooks(params: BooksSearchParams): Promise<Book[]> {
     const trQuery = params.query.trim();
     if (!trQuery) {
         throw new Error("no title or authors or keyword");
