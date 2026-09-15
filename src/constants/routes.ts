@@ -6,6 +6,7 @@ export const ROUTE_SEGMENTS = {
   GALLERY: 'gallery',
   GRID: 'grid',
   BREED: 'breed/:id',
+  BOOKS: 'books',
 } as const;
 
 /**
@@ -23,6 +24,7 @@ export const ROUTES = {
   GALLERY: `/${ROUTE_SEGMENTS.GALLERY}`,
   GALLERY_GRID: `/${ROUTE_SEGMENTS.GALLERY}/${ROUTE_SEGMENTS.GRID}`,
   GALLERY_BREED: `/${ROUTE_SEGMENTS.GALLERY}/${ROUTE_SEGMENTS.BREED}`,
+  BOOKS: `/${ROUTE_SEGMENTS.BOOKS}`,
 
   NOT_FOUND: '*',
 
@@ -38,6 +40,7 @@ export type RoutePattern =
   | typeof ROUTES.GALLERY
   | typeof ROUTES.GALLERY_GRID
   | typeof ROUTES.GALLERY_BREED
+  | typeof ROUTES.BOOKS
   | typeof ROUTES.NOT_FOUND;
 
 const getGroupQuery = (group?: string | null) => {
@@ -49,6 +52,8 @@ export const LINKS = {
   home: () => ROUTES.HOME,
 
   gallery: () => ROUTES.GALLERY,
+
+  books: () => ROUTES.BOOKS,
 
   grid: (group?: string | null) =>
     `${ROUTES.GALLERY_GRID}${getGroupQuery(group)}` as const,

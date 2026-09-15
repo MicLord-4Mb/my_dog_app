@@ -6,7 +6,7 @@ import { REQUEST_STATUS } from '@/constants/status';
 import { Badge } from '@/components/ui/badge';
 import { EmptyState } from '@/components/common/EmptyState';
 import { ErrorState } from '@/components/common/ErrorState';
-import { changeQuery, changeSearchMode, selectBook, resetBooks } from '@/features/books/booksSlice';
+import { changeQuery, changeSearchMode, selectBook } from '@/features/books/booksSlice';
 import { loadBooks } from '@/features/books/booksThunks';
 import {
   selectBooksQuery,
@@ -41,9 +41,7 @@ const STYLES = {
   resultsGrid: 'grid grid-cols-1 lg:grid-cols-12 gap-8 items-start',
 };
 
-const VALID_MODES: SearchMode[] = ['all', 'title', 'author'];
-const isValidMode = (v: string | null): v is SearchMode =>
-  v !== null && VALID_MODES.includes(v as SearchMode);
+
 
 export const BooksPage = () => {
   const dispatch = useAppDispatch();
@@ -57,37 +55,20 @@ export const BooksPage = () => {
   const selectedBookKey = useAppSelector(selectSelectedBookKey);
   const selectedBook = useAppSelector(selectSelectedBook);
 
-  // Sync URL → Store on initial mount / URL change (deep-link support)
+  const urlBook = searchParams.get('book');
   useEffect(() => {
-    const urlQuery = searchParams.get('q') ?? '';
-    const urlModeRaw = searchParams.get('mode');
-    const urlMode: SearchMode = isValidMode(urlModeRaw) ? urlModeRaw : 'all';
-
-    if (!urlQuery.trim()) return;
-
-    // Only dispatch if URL params differ from current store state
-    if (urlQuery !== query || urlMode !== mode) {
-      dispatch(changeQuery(urlQuery));
-      dispatch(changeSearchMode(urlMode));
+    if (urlBook && urlBook !== selectedBookKey) {
+      dispatch(selectBook(urlBook));
     }
-
-    // If we have URL params but no data (fresh page load via link), trigger search
-    if (status === REQUEST_STATUS.IDLE || urlQuery !== query || urlMode !== mode) {
-      void dispatch(loadBooks({ query: urlQuery, mode: urlMode }));
-    }
-    // Run only when URL search params change, not on store changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
+  }, [urlBook, selectedBookKey, dispatch]);
 
   const handleSubmit = () => {
     const trimmed = query.trim();
     if (!trimmed) return;
     setSearchParams({ q: trimmed, mode });
-    void dispatch(loadBooks({ query: trimmed, mode }));
   };
 
   const handleReset = () => {
-    dispatch(resetBooks());
     setSearchParams({});
   };
 
@@ -101,6 +82,11 @@ export const BooksPage = () => {
 
   const handleSelectBook = (key: string) => {
     dispatch(selectBook(key));
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set('book', key);
+      return next;
+    });
   };
 
   const handleRetry = () => {
