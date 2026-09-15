@@ -1,8 +1,9 @@
-import {booksReducer} from "@/features/books/booksSlice";
-import breedReducer from "@/features/breeds/breedSlice";
 import { configureStore } from "@reduxjs/toolkit";
 import favoritesReducer from "@/features/favorites/favoritesSlice";
 import { createLogger } from 'redux-logger'
+import booksReducer from "@/features/books/booksSlice";
+import breedReducer from "@/features/breeds/breedSlice";
+
 
 const logger = createLogger({
   collapsed: true,

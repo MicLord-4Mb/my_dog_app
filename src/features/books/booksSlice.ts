@@ -1,8 +1,8 @@
-import {REQUEST_STATUS} from "@/constants/status";
-import {loadBooks} from "@/features/books/booksThunks";
-import {type Book, SEARCH_MODE, type SearchMode} from "@/types/books.types";
-import type {RequestState} from "@/types/request.types";
-import {createSlice, type PayloadAction} from "@reduxjs/toolkit";
+import { REQUEST_STATUS } from "@/constants/status";
+import { loadBooks } from "@/features/books/booksThunks";
+import { type Book, SEARCH_MODE, type SearchMode } from "@/types/books.types";
+import type { RequestState } from "@/types/request.types";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 export interface BooksState {
   query: string;
@@ -68,4 +68,4 @@ export const {
   resetBooks,
 } = booksSlice.actions;
 
-export const booksReducer = booksSlice.reducer;
+export default booksSlice.reducer;
