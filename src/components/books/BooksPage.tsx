@@ -1,27 +1,12 @@
-import {isValidSearchMode} from "@/lib/booksUtils";
-import { useEffect } from 'react';
-import { useSearchParams } from 'react-router';
+import {useBooksController} from "@/features/books/hooks/useBooksController";
 import { Loader2 } from 'lucide-react';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { REQUEST_STATUS } from '@/constants/status';
 import { Badge } from '@/components/ui/badge';
 import { EmptyState } from '@/components/common/EmptyState';
 import { ErrorState } from '@/components/common/ErrorState';
-import { changeQuery, changeSearchMode, selectBook, resetBooks } from '@/features/books/booksSlice';
-import { loadBooks } from '@/features/books/booksThunks';
-import {
-  selectBooksQuery,
-  selectBooksMode,
-  selectBooksStatus,
-  selectBooksError,
-  selectBooksList,
-  selectSelectedBookKey,
-  selectSelectedBook,
-} from '@/features/books/booksSelectors';
 import { BookSearchForm } from '@/components/books/BookSearchForm';
 import { BookList } from '@/components/books/BookList';
 import { BookCard } from '@/components/books/BookCard';
-import {SEARCH_MODE, type SearchMode} from '@/types/books.types';
 
 const STYLES = {
   container: 'relative w-full max-w-container-max mx-auto px-4 md:px-8 pt-6 pb-12 overflow-hidden',
@@ -43,68 +28,90 @@ const STYLES = {
 };
 
 export const BooksPage = () => {
-  const dispatch = useAppDispatch();
-  const [searchParams, setSearchParams] = useSearchParams();
+  // const dispatch = useAppDispatch();
+  // const [searchParams, setSearchParams] = useSearchParams();
+  //
+  // const query = useAppSelector(selectBooksQuery);
+  // const mode = useAppSelector(selectBooksMode);
+  // const status = useAppSelector(selectBooksStatus);
+  // const error = useAppSelector(selectBooksError);
+  // const books = useAppSelector(selectBooksList);
+  // const selectedBookKey = useAppSelector(selectSelectedBookKey);
+  // const selectedBook = useAppSelector(selectSelectedBook);
+  //
+  // // Sync URL → Store on initial mount / URL change (deep-link support)
+  // useEffect(() => {
+  //   const urlQuery = searchParams.get('q') ?? '';
+  //   const urlModeRaw = searchParams.get('mode');
+  //   const urlMode: SearchMode = isValidSearchMode(urlModeRaw) ? urlModeRaw : SEARCH_MODE.ALL;
+  //
+  //   if (!urlQuery.trim()) return;
+  //
+  //   // Only dispatch if URL params differ from current store state
+  //   if (urlQuery !== query || urlMode !== mode) {
+  //     dispatch(changeQuery(urlQuery));
+  //     dispatch(changeSearchMode(urlMode));
+  //   }
+  //
+  //   // If we have URL params but no data (fresh page load via link), trigger search
+  //   if (status === REQUEST_STATUS.IDLE || urlQuery !== query || urlMode !== mode) {
+  //     void dispatch(loadBooks({ query: urlQuery, mode: urlMode }));
+  //   }
+  //   // Run only when URL search params change, not on store changes
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [searchParams]);
+  //
+  // const handleSubmit = () => {
+  //   const trimmed = query.trim();
+  //   if (!trimmed) return;
+  //   setSearchParams({ q: trimmed, mode });
+  //   void dispatch(loadBooks({ query: trimmed, mode }));
+  // };
+  //
+  // const handleReset = () => {
+  //   dispatch(resetBooks());
+  //   setSearchParams({});
+  // };
+  //
+  // const handleQueryChange = (next: string) => {
+  //   dispatch(changeQuery(next));
+  // };
+  //
+  // const handleModeChange = (next: SearchMode) => {
+  //   dispatch(changeSearchMode(next));
+  // };
+  //
+  // const handleSelectBook = (key: string) => {
+  //   dispatch(selectBook(key));
+  // };
+  //
+  // const handleRetry = () => {
+  //   void dispatch(loadBooks({ query, mode }));
+  // };
 
-  const query = useAppSelector(selectBooksQuery);
-  const mode = useAppSelector(selectBooksMode);
-  const status = useAppSelector(selectBooksStatus);
-  const error = useAppSelector(selectBooksError);
-  const books = useAppSelector(selectBooksList);
-  const selectedBookKey = useAppSelector(selectSelectedBookKey);
-  const selectedBook = useAppSelector(selectSelectedBook);
+  const {
+    // for the form
+    draftQuery,
+    draftMode,
+    setDraftQuery,
+    setDraftMode,
 
-  // Sync URL → Store on initial mount / URL change (deep-link support)
-  useEffect(() => {
-    const urlQuery = searchParams.get('q') ?? '';
-    const urlModeRaw = searchParams.get('mode');
-    const urlMode: SearchMode = isValidSearchMode(urlModeRaw) ? urlModeRaw : SEARCH_MODE.ALL;
+    // data & state
+    bookId,
+    books,
+    selectedBook,
+    status,
+    error,
+    hasSearchCriteria,
 
-    if (!urlQuery.trim()) return;
+    // handle function
+    handleSelectBook,
+    handleSearchSubmit,
+    handleReset,
+    handleRetry,
+  } = useBooksController();
 
-    // Only dispatch if URL params differ from current store state
-    if (urlQuery !== query || urlMode !== mode) {
-      dispatch(changeQuery(urlQuery));
-      dispatch(changeSearchMode(urlMode));
-    }
-
-    // If we have URL params but no data (fresh page load via link), trigger search
-    if (status === REQUEST_STATUS.IDLE || urlQuery !== query || urlMode !== mode) {
-      void dispatch(loadBooks({ query: urlQuery, mode: urlMode }));
-    }
-    // Run only when URL search params change, not on store changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
-
-  const handleSubmit = () => {
-    const trimmed = query.trim();
-    if (!trimmed) return;
-    setSearchParams({ q: trimmed, mode });
-    void dispatch(loadBooks({ query: trimmed, mode }));
-  };
-
-  const handleReset = () => {
-    dispatch(resetBooks());
-    setSearchParams({});
-  };
-
-  const handleQueryChange = (next: string) => {
-    dispatch(changeQuery(next));
-  };
-
-  const handleModeChange = (next: SearchMode) => {
-    dispatch(changeSearchMode(next));
-  };
-
-  const handleSelectBook = (key: string) => {
-    dispatch(selectBook(key));
-  };
-
-  const handleRetry = () => {
-    void dispatch(loadBooks({ query, mode }));
-  };
-
-  const resultsCount = books ? books.length : null;
+  const resultsCount = ( books && books.length > 0 ) ? books.length : null;
 
   return (
     <div className={STYLES.container}>
@@ -133,19 +140,19 @@ export const BooksPage = () => {
       {/* Search Form */}
       <div className={STYLES.searchSection}>
         <BookSearchForm
-          query={query}
-          mode={mode}
+          query={draftQuery}
+          mode={draftMode}
           isLoading={status === REQUEST_STATUS.LOADING}
           resultsCount={resultsCount}
-          onQueryChange={handleQueryChange}
-          onModeChange={handleModeChange}
-          onSubmit={handleSubmit}
+          onQueryChange={setDraftQuery}
+          onModeChange={setDraftMode}
+          onSubmit={handleSearchSubmit}
           onReset={handleReset}
         />
       </div>
 
       {/* State-dependent content */}
-      {status === REQUEST_STATUS.IDLE && (
+      {!hasSearchCriteria && status === REQUEST_STATUS.IDLE && (
         <EmptyState
           icon="search"
           title="Ready to explore"
@@ -180,7 +187,7 @@ export const BooksPage = () => {
         <section className={STYLES.resultsGrid}>
           <BookList
             books={books}
-            selectedBookKey={selectedBookKey}
+            selectedBookKey={bookId ? bookId : null}
             onSelect={handleSelectBook}
           />
           {selectedBook && <BookCard book={selectedBook} />}
