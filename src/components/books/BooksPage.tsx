@@ -1,4 +1,5 @@
-import {useBooksController} from "@/features/books/hooks/useBooksController";
+import React from 'react';
+import { useBooksController } from "@/features/books/hooks/useBooksController";
 import { Loader2 } from 'lucide-react';
 import { REQUEST_STATUS } from '@/constants/status';
 import { Badge } from '@/components/ui/badge';
@@ -15,6 +16,8 @@ const STYLES = {
 
   headerSection: 'mb-8',
   headerBadgeRow: 'flex flex-wrap items-center gap-2 mb-2',
+  headerBadge: 'gap-1 tracking-wide uppercase font-semibold text-xs',
+  headerBadgeIcon: 'material-symbols-outlined text-[14px]',
   headerRow: 'flex flex-col md:flex-row md:items-end justify-between gap-4',
   heading: 'font-headline text-4xl md:text-5xl font-extrabold text-on-surface tracking-tight',
   subheading: 'text-lg text-secondary max-w-2xl mt-1',
@@ -22,81 +25,32 @@ const STYLES = {
   searchSection: 'mb-8',
 
   loadingBox: 'w-full flex flex-col items-center justify-center py-16 gap-3',
+  loadingSpinner: 'w-10 h-10 text-primary animate-spin',
   loadingText: 'text-on-surface-variant font-medium',
 
   resultsGrid: 'grid grid-cols-1 lg:grid-cols-12 gap-8 items-start',
 };
 
-export const BooksPage = () => {
-  // const dispatch = useAppDispatch();
-  // const [searchParams, setSearchParams] = useSearchParams();
-  //
-  // const query = useAppSelector(selectBooksQuery);
-  // const mode = useAppSelector(selectBooksMode);
-  // const status = useAppSelector(selectBooksStatus);
-  // const error = useAppSelector(selectBooksError);
-  // const books = useAppSelector(selectBooksList);
-  // const selectedBookKey = useAppSelector(selectSelectedBookKey);
-  // const selectedBook = useAppSelector(selectSelectedBook);
-  //
-  // // Sync URL → Store on initial mount / URL change (deep-link support)
-  // useEffect(() => {
-  //   const urlQuery = searchParams.get('q') ?? '';
-  //   const urlModeRaw = searchParams.get('mode');
-  //   const urlMode: SearchMode = isValidSearchMode(urlModeRaw) ? urlModeRaw : SEARCH_MODE.ALL;
-  //
-  //   if (!urlQuery.trim()) return;
-  //
-  //   // Only dispatch if URL params differ from current store state
-  //   if (urlQuery !== query || urlMode !== mode) {
-  //     dispatch(changeQuery(urlQuery));
-  //     dispatch(changeSearchMode(urlMode));
-  //   }
-  //
-  //   // If we have URL params but no data (fresh page load via link), trigger search
-  //   if (status === REQUEST_STATUS.IDLE || urlQuery !== query || urlMode !== mode) {
-  //     void dispatch(loadBooks({ query: urlQuery, mode: urlMode }));
-  //   }
-  //   // Run only when URL search params change, not on store changes
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [searchParams]);
-  //
-  // const handleSubmit = () => {
-  //   const trimmed = query.trim();
-  //   if (!trimmed) return;
-  //   setSearchParams({ q: trimmed, mode });
-  //   void dispatch(loadBooks({ query: trimmed, mode }));
-  // };
-  //
-  // const handleReset = () => {
-  //   dispatch(resetBooks());
-  //   setSearchParams({});
-  // };
-  //
-  // const handleQueryChange = (next: string) => {
-  //   dispatch(changeQuery(next));
-  // };
-  //
-  // const handleModeChange = (next: SearchMode) => {
-  //   dispatch(changeSearchMode(next));
-  // };
-  //
-  // const handleSelectBook = (key: string) => {
-  //   dispatch(selectBook(key));
-  // };
-  //
-  // const handleRetry = () => {
-  //   void dispatch(loadBooks({ query, mode }));
-  // };
-
+/**
+ * Main feature page for book search and catalog discovery.
+ *
+ * Architecture:
+ * - Pure presentational view following the Controller Hook pattern (`useBooksController`).
+ * - Encapsulates all style definitions at the top in `STYLES`.
+ * - Handles IDLE, LOADING, ERROR, EMPTY, and SUCCESS visual states declaratively.
+ * - Renders Master-Detail view (`BookList` + `BookCard`) upon receiving results.
+ *
+ * @returns {React.JSX.Element} The rendered books catalog page.
+ */
+export const BooksPage: React.FC = () => {
   const {
-    // for the form
+    // Form state
     draftQuery,
     draftMode,
     setDraftQuery,
     setDraftMode,
 
-    // data & state
+    // Data & state
     bookId,
     books,
     selectedBook,
@@ -104,14 +58,14 @@ export const BooksPage = () => {
     error,
     hasSearchCriteria,
 
-    // handle function
+    // Action handlers
     handleSelectBook,
     handleSearchSubmit,
     handleReset,
     handleRetry,
   } = useBooksController();
 
-  const resultsCount = ( books && books.length > 0 ) ? books.length : null;
+  const resultsCount = books && books.length > 0 ? books.length : null;
 
   return (
     <div className={STYLES.container}>
@@ -122,8 +76,8 @@ export const BooksPage = () => {
       {/* Header Section */}
       <header className={STYLES.headerSection}>
         <div className={STYLES.headerBadgeRow}>
-          <Badge variant="default" className="gap-1 tracking-wide uppercase font-semibold text-xs">
-            <span className="material-symbols-outlined text-[14px]">auto_stories</span>
+          <Badge variant="default" className={STYLES.headerBadge}>
+            <span className={STYLES.headerBadgeIcon}>auto_stories</span>
             Curated Knowledge • Open Library
           </Badge>
         </div>
@@ -162,7 +116,7 @@ export const BooksPage = () => {
 
       {status === REQUEST_STATUS.LOADING && (
         <div className={STYLES.loadingBox}>
-          <Loader2 className="w-10 h-10 text-primary animate-spin" />
+          <Loader2 className={STYLES.loadingSpinner} />
           <p className={STYLES.loadingText}>Searching Open Library...</p>
         </div>
       )}
@@ -187,7 +141,7 @@ export const BooksPage = () => {
         <section className={STYLES.resultsGrid}>
           <BookList
             books={books}
-            selectedBookKey={bookId ? bookId : null}
+            selectedBookKey={bookId}
             onSelect={handleSelectBook}
           />
           {selectedBook && <BookCard book={selectedBook} />}
