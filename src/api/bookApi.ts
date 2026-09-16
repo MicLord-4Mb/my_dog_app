@@ -1,5 +1,5 @@
-import { mapOpenLibraryBookDtoToDomain } from "@/api/mappers/libBook.mapper";
-import type { OpenLibrarySearchResponse } from "@/types/api.types";
+import {mapOpenLibraryBookDtoToDomain} from "@/api/mappers/libBook.mapper";
+import type {OpenLibrarySearchResponse} from "@/types/api.types";
 import axios from "axios";
 import {
   type Book,

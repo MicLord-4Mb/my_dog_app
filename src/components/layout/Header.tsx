@@ -93,8 +93,8 @@ export const Header = () => {
             <NavLink
               to={LINKS.favorites()}
               className={`${STYLES.navLinkBase} ${isFavoritesActive
-                  ? STYLES.navLinkActive
-                  : STYLES.navLinkInactive
+                ? STYLES.navLinkActive
+                : STYLES.navLinkInactive
                 }`}
             >
               <span>Favorites</span>

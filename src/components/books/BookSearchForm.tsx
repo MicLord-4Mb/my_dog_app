@@ -165,9 +165,9 @@ export const BookSearchForm = ({
                   <SelectValue placeholder="Mode" />
                 </SelectTrigger>
                 <SelectContent className={STYLES.selectContent}>
-                  <SelectItem value={SEARCH_MODE.ALL}>Any field</SelectItem>
-                  <SelectItem value={SEARCH_MODE.TITLE}>Title</SelectItem>
-                  <SelectItem value={SEARCH_MODE.AUTHOR}>Author</SelectItem>
+                  <SelectItem value="all">Any field</SelectItem>
+                  <SelectItem value="title">Title</SelectItem>
+                  <SelectItem value="author">Author</SelectItem>
                 </SelectContent>
               </Select>
             </div>
