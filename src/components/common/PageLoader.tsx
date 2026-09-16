@@ -1,11 +1,21 @@
-import {Loader2} from "lucide-react";
+import React from 'react';
+import { Loader2 } from "lucide-react";
+
+const STYLES = {
+  container: "w-full h-[60vh] flex flex-col items-center justify-center",
+  spinner: "w-10 h-10 text-primary animate-spin mb-4",
+  text: "text-on-surface-variant font-medium",
+};
 
 /**
- * Suspense fallback loading indicator while page chunk is being fetched.
+ * Suspense fallback loading indicator displayed while an asynchronous route or chunk is being fetched.
+ *
+ * @returns {React.JSX.Element} Centered full-height loader with spinning icon and descriptive label.
  */
-export const PageLoader = () => (
-  <div className="w-full h-[60vh] flex flex-col items-center justify-center">
-    <Loader2 className="w-10 h-10 text-primary animate-spin mb-4" />
-    <p className="text-on-surface-variant font-medium">Loading page...</p>
+export const PageLoader: React.FC = () => (
+  <div className={STYLES.container}>
+    <Loader2 className={STYLES.spinner} />
+    <p className={STYLES.text}>Loading page...</p>
   </div>
 );
+

@@ -1,3 +1,6 @@
+import { buildBooksSearchUrl } from "@/lib/booksUtils";
+import { SEARCH_MODE, type SearchMode } from "@/types/books.types";
+
 /**
  * Individual URL path segment constants.
  * Used to compose absolute and relative route paths without hardcoded strings.
@@ -6,6 +9,8 @@ export const ROUTE_SEGMENTS = {
   GALLERY: 'gallery',
   GRID: 'grid',
   BREED: 'breed/:id',
+  BOOKS: 'books',
+  SEARCH: 'search',
 } as const;
 
 /**
@@ -23,6 +28,8 @@ export const ROUTES = {
   GALLERY: `/${ROUTE_SEGMENTS.GALLERY}`,
   GALLERY_GRID: `/${ROUTE_SEGMENTS.GALLERY}/${ROUTE_SEGMENTS.GRID}`,
   GALLERY_BREED: `/${ROUTE_SEGMENTS.GALLERY}/${ROUTE_SEGMENTS.BREED}`,
+  BOOKS: `/${ROUTE_SEGMENTS.BOOKS}`,
+  SEARCH: `/${ROUTE_SEGMENTS.BOOKS}/${ROUTE_SEGMENTS.SEARCH}`,
 
   NOT_FOUND: '*',
 
@@ -38,6 +45,8 @@ export type RoutePattern =
   | typeof ROUTES.GALLERY
   | typeof ROUTES.GALLERY_GRID
   | typeof ROUTES.GALLERY_BREED
+  | typeof ROUTES.BOOKS
+  | typeof ROUTES.SEARCH
   | typeof ROUTES.NOT_FOUND;
 
 const getGroupQuery = (group?: string | null) => {
@@ -58,6 +67,11 @@ export const LINKS = {
 
   breed: (id: string, group?: string | null) =>
     `${ROUTES.GALLERY_BREED.replace(':id', encodeURIComponent(id))}${getGroupQuery(group)}` as const,
+
+  books: () => ROUTES.BOOKS,
+
+  search: (query = '', mode: SearchMode = SEARCH_MODE.ALL, bookId?: string | null) =>
+    buildBooksSearchUrl({ query, mode, bookId }),
 } as const;
 
 export type AppUrl = ReturnType<(typeof LINKS)[keyof typeof LINKS]>;

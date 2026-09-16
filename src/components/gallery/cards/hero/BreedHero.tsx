@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import type { DogBreed } from '@/types/breed.types';
 import { BreedHeroContext } from './BreedHeroContext';
@@ -26,11 +26,6 @@ export const BreedHeroComponent = ({
 }: BreedHeroProps) => {
   const [imgError, setImgError] = useState(false);
   const [fitMode, setFitMode] = useState<'cover' | 'contain'>('cover');
-
-  // Reset error state when breed changes
-  useEffect(() => {
-    setImgError(false);
-  }, [breed.id, breed.imageUrl]);
 
   const showPlaceholder = !breed.imageUrl || imgError;
 

@@ -14,12 +14,15 @@ const STYLES = {
 /**
  * Mobile Bottom Navigation Bar:
  * Displays only on small screens (md:hidden) for convenient one-handed thumb navigation.
+ *
+ * @returns {React.JSX.Element} Responsive bottom navigation dock.
  */
 export const BottomNav: React.FC = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const isFavoritesActive = location.pathname.startsWith(ROUTES.GALLERY) && searchParams.get('group') === FAVORITES_GROUP_KEY;
   const isGalleryActive = location.pathname.startsWith(ROUTES.GALLERY) && !isFavoritesActive;
+  const isBooksActive = location.pathname.startsWith(ROUTES.BOOKS);
   const isHomeActive = location.pathname === ROUTES.HOME;
 
   return (
@@ -40,6 +43,13 @@ export const BottomNav: React.FC = () => {
           <span className={STYLES.label}>Gallery</span>
         </NavLink>
         <NavLink
+          to={LINKS.books()}
+          className={`${STYLES.linkBase} ${isBooksActive ? STYLES.linkActive : STYLES.linkInactive}`}
+        >
+          <span className={STYLES.icon}>menu_book</span>
+          <span className={STYLES.label}>Books</span>
+        </NavLink>
+        <NavLink
           to={LINKS.favorites()}
           className={`${STYLES.linkBase} ${isFavoritesActive ? STYLES.linkActive : STYLES.linkInactive}`}
         >
@@ -55,3 +65,4 @@ export const BottomNav: React.FC = () => {
     </nav>
   );
 };
+

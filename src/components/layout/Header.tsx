@@ -80,10 +80,21 @@ export const Header = () => {
               Gallery
             </NavLink>
             <NavLink
-              to={LINKS.favorites()}
-              className={`${STYLES.navLinkBase} ${isFavoritesActive
+              to={LINKS.books()}
+              className={({ isActive }) =>
+                `${STYLES.navLinkBase} ${isActive
                   ? STYLES.navLinkActive
                   : STYLES.navLinkInactive
+                }`
+              }
+            >
+              Books
+            </NavLink>
+            <NavLink
+              to={LINKS.favorites()}
+              className={`${STYLES.navLinkBase} ${isFavoritesActive
+                ? STYLES.navLinkActive
+                : STYLES.navLinkInactive
                 }`}
             >
               <span>Favorites</span>
