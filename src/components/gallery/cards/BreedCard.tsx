@@ -42,7 +42,7 @@ export const BreedCard = ({
   return (
     <>
       <Card className={STYLES.cardContainer}>
-        <BreedHero breed={breed} onLightboxOpen={() => setIsLightboxOpen(true)}>
+        <BreedHero key={breed.id} breed={breed} onLightboxOpen={() => setIsLightboxOpen(true)}>
           <BreedHero.Media />
           <BreedHero.Navigation
             onPrev={onPrev}
