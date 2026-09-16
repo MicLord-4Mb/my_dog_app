@@ -1,5 +1,5 @@
-import type { FormEvent } from 'react';
-import { SEARCH_MODE, type SearchMode } from '@/types/books.types';
+import type { SyntheticEvent } from 'react';
+import type { SearchMode } from '@/types/books.types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -86,7 +86,7 @@ const STYLES = {
  * - Real-time results count and API connection badge.
  *
  * @param {BookSearchFormProps} props - Component properties.
- * @returns {React.JSX.Element} Rendered search form card.
+ * @returns Rendered search form card.
  */
 export const BookSearchForm = ({
   query,
@@ -98,7 +98,7 @@ export const BookSearchForm = ({
   onSubmit,
   onReset,
 }: BookSearchFormProps) => {
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     onSubmit();
   };
