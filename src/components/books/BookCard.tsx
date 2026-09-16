@@ -3,14 +3,21 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
-interface BookCardProps {
+/**
+ * Props for the `BookCard` component.
+ */
+export interface BookCardProps {
+  /** The domain Book model to display in the detail card */
   book: Book;
 }
 
 const STYLES = {
   wrapper: 'lg:col-span-7 sticky top-24',
+  card: 'p-6 flex flex-col gap-6 relative bg-surface-container-lowest border-secondary-fixed/40',
   topBar: 'flex items-center justify-between pb-2',
   topBarLeft: 'flex items-center gap-2',
+  selectedBadge: 'gap-1 uppercase tracking-wider font-bold text-xs',
+  selectedBadgeIcon: 'material-symbols-outlined text-[14px]',
   keyLabel: 'text-xs text-secondary',
 
   hero: 'grid grid-cols-1 sm:grid-cols-12 gap-6 items-center',
@@ -26,12 +33,18 @@ const STYLES = {
   coverPlaceholder:
     'w-full aspect-[3/4] rounded-xl overflow-hidden bg-surface-container shadow-md flex flex-col items-center justify-center gap-2 text-secondary',
   coverPlaceholderIcon: 'material-symbols-outlined text-[48px] text-outline-variant',
+  coverPlaceholderText: 'text-sm font-medium',
 
   infoCol: 'sm:col-span-7 flex flex-col gap-2',
   yearRow: 'flex items-center gap-2',
   chipRow: 'flex flex-wrap gap-1.5 pt-1',
+  starBadge: 'gap-1 px-2.5 py-1 text-xs font-medium',
+  starIcon: 'material-symbols-outlined text-primary text-[16px]',
+  editionBadge: 'gap-1 px-2.5 py-1 text-xs font-medium',
+  editionIcon: 'material-symbols-outlined text-[16px] text-secondary',
   titleText: 'font-headline text-3xl font-bold text-on-surface tracking-tight',
   authorRow: 'text-base text-on-surface-variant flex items-center gap-1.5',
+  authorLabel: 'font-semibold text-on-surface',
   authorHighlight: 'text-primary font-semibold',
   description: 'text-base text-secondary leading-relaxed pt-1',
 
@@ -48,12 +61,26 @@ const STYLES = {
   subjectsSection: 'flex flex-col gap-1',
   subjectsLabel: 'text-xs text-secondary uppercase tracking-wider',
   subjectsRow: 'flex flex-wrap gap-1.5',
+  subjectBadge: 'font-medium',
 
   actionsRow: 'flex flex-col sm:flex-row items-center gap-4 pt-2',
+  actionBtn: 'w-full sm:w-auto flex-1 h-12 gap-1.5',
+  actionIcon: 'material-symbols-outlined text-[20px]',
 };
 
 const MAX_VISIBLE_SUBJECTS = 4;
 
+/**
+ * Detailed presentation card for the active selected book:
+ * - High-resolution cover with fallback state.
+ * - Publication year, edition count, and community rating badges.
+ * - Authors, description, and canonical categorization subject tags.
+ * - Technical archive schema metadata grid.
+ * - External link to full Open Library record.
+ *
+ * @param {BookCardProps} props - Component properties.
+ * @returns {React.JSX.Element} Rich book detail card.
+ */
 export const BookCard = ({ book }: BookCardProps) => {
   const subjects = book.subjects ?? [];
   const visibleSubjects = subjects.slice(0, MAX_VISIBLE_SUBJECTS);
@@ -62,12 +89,12 @@ export const BookCard = ({ book }: BookCardProps) => {
 
   return (
     <article className={STYLES.wrapper}>
-      <Card className="p-6 flex flex-col gap-6 relative bg-surface-container-lowest border-secondary-fixed/40">
+      <Card className={STYLES.card}>
         {/* Top Bar */}
         <div className={STYLES.topBar}>
           <div className={STYLES.topBarLeft}>
-            <Badge variant="amber" className="gap-1 uppercase tracking-wider font-bold text-xs">
-              <span className="material-symbols-outlined text-[14px]">bookmark_heart</span>
+            <Badge variant="amber" className={STYLES.selectedBadge}>
+              <span className={STYLES.selectedBadgeIcon}>bookmark_heart</span>
               Selected Book
             </Badge>
             <span className={STYLES.keyLabel}>OL Work: {book.key}</span>
@@ -94,7 +121,7 @@ export const BookCard = ({ book }: BookCardProps) => {
             ) : (
               <div className={STYLES.coverPlaceholder}>
                 <span className={STYLES.coverPlaceholderIcon}>auto_stories</span>
-                <span className="text-sm font-medium">No cover available</span>
+                <span className={STYLES.coverPlaceholderText}>No cover available</span>
               </div>
             )}
           </div>
@@ -110,7 +137,7 @@ export const BookCard = ({ book }: BookCardProps) => {
             <h2 className={STYLES.titleText}>{book.title}</h2>
 
             <p className={STYLES.authorRow}>
-              <span className="font-semibold text-on-surface">By</span>
+              <span className={STYLES.authorLabel}>By</span>
               <span className={STYLES.authorHighlight}>
                 {book.authors.length > 0 ? book.authors.join(', ') : 'Unknown author'}
               </span>
@@ -119,9 +146,9 @@ export const BookCard = ({ book }: BookCardProps) => {
             {/* Chips */}
             <div className={STYLES.chipRow}>
               {book.rating != null && (
-                <Badge variant="secondary" className="gap-1 px-2.5 py-1 text-xs font-medium">
+                <Badge variant="secondary" className={STYLES.starBadge}>
                   <span
-                    className="material-symbols-outlined text-primary text-[16px]"
+                    className={STYLES.starIcon}
                     style={{ fontVariationSettings: "'FILL' 1" }}
                   >
                     star
@@ -130,8 +157,8 @@ export const BookCard = ({ book }: BookCardProps) => {
                 </Badge>
               )}
               {book.editionCount != null && (
-                <Badge variant="secondary" className="gap-1 px-2.5 py-1 text-xs font-medium">
-                  <span className="material-symbols-outlined text-[16px] text-secondary">auto_stories</span>
+                <Badge variant="secondary" className={STYLES.editionBadge}>
+                  <span className={STYLES.editionIcon}>auto_stories</span>
                   {book.editionCount} Editions
                 </Badge>
               )}
@@ -181,7 +208,7 @@ export const BookCard = ({ book }: BookCardProps) => {
             <span className={STYLES.subjectsLabel}>Categorization Tags</span>
             <div className={STYLES.subjectsRow}>
               {visibleSubjects.map((s) => (
-                <Badge key={s} variant="secondary" className="font-medium">
+                <Badge key={s} variant="secondary" className={STYLES.subjectBadge}>
                   {s}
                 </Badge>
               ))}
@@ -194,13 +221,13 @@ export const BookCard = ({ book }: BookCardProps) => {
 
         {/* Actions */}
         <div className={STYLES.actionsRow}>
-          <Button asChild className="w-full sm:w-auto flex-1 h-12 gap-1.5">
+          <Button asChild className={STYLES.actionBtn}>
             <a
               href={openLibraryUrl}
               target="_blank"
               rel="noopener noreferrer"
             >
-              <span className="material-symbols-outlined text-[20px]">open_in_new</span>
+              <span className={STYLES.actionIcon}>open_in_new</span>
               <span>View on Open Library</span>
             </a>
           </Button>

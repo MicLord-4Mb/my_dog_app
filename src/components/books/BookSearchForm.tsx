@@ -1,5 +1,5 @@
 import type { FormEvent } from 'react';
-import {SEARCH_MODE, type SearchMode} from '@/types/books.types';
+import { SEARCH_MODE, type SearchMode } from '@/types/books.types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -12,14 +12,25 @@ import {
   SelectItem,
 } from '@/components/ui/select';
 
-interface BookSearchFormProps {
+/**
+ * Props for the `BookSearchForm` component.
+ */
+export interface BookSearchFormProps {
+  /** Current text query draft value */
   query: string;
+  /** Active search mode (all, title, author) */
   mode: SearchMode;
+  /** Whether search request is currently pending */
   isLoading: boolean;
+  /** Number of results loaded, or null if no search has been executed */
   resultsCount: number | null;
+  /** Callback fired when user edits search text input */
   onQueryChange: (query: string) => void;
+  /** Callback fired when user chooses a different search mode */
   onModeChange: (mode: SearchMode) => void;
+  /** Callback fired when form is submitted */
   onSubmit: () => void;
+  /** Callback fired when reset button is pressed */
   onReset: () => void;
 }
 
@@ -67,6 +78,16 @@ const STYLES = {
   statusDot: 'inline-block w-2 h-2 rounded-full bg-primary-container animate-pulse',
 };
 
+/**
+ * Search input form component for querying Open Library:
+ * - Text search input with instant clear button.
+ * - Mode dropdown selector (Any field, Title, Author).
+ * - Submit and reset action controls.
+ * - Real-time results count and API connection badge.
+ *
+ * @param {BookSearchFormProps} props - Component properties.
+ * @returns {React.JSX.Element} Rendered search form card.
+ */
 export const BookSearchForm = ({
   query,
   mode,

@@ -1,13 +1,20 @@
 import type { Book } from '@/types/books.types';
 import { Badge } from '@/components/ui/badge';
 
-interface BookListProps {
+/**
+ * Props for the `BookList` component.
+ */
+export interface BookListProps {
+  /** Array of domain Book entities to display in the list */
   books: Book[];
+  /** Active selected book key identifier or null */
   selectedBookKey: string | null;
+  /** Callback fired when user selects a book item */
   onSelect: (bookKey: string) => void;
 }
 
 const STYLES = {
+  aside: 'lg:col-span-5 flex flex-col gap-4',
   header: 'flex items-center justify-between px-1',
   headerLeft: 'flex items-center gap-2',
   title: 'font-headline text-2xl font-semibold text-on-surface tracking-tight',
@@ -32,9 +39,18 @@ const STYLES = {
   metaIcon: 'material-symbols-outlined text-[14px]',
 };
 
+/**
+ * Scrollable list of book search results:
+ * - Keyboard accessible listbox options.
+ * - Highlights active selected book with primary accent indicators.
+ * - Displays author, publication year, and edition count.
+ *
+ * @param {BookListProps} props - Component properties.
+ * @returns {React.JSX.Element} Interactive book results list.
+ */
 export const BookList = ({ books, selectedBookKey, onSelect }: BookListProps) => {
   return (
-    <aside className="lg:col-span-5 flex flex-col gap-4">
+    <aside className={STYLES.aside}>
       <div className={STYLES.header}>
         <div className={STYLES.headerLeft}>
           <h2 className={STYLES.title}>Results</h2>

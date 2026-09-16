@@ -1,6 +1,11 @@
 import React from 'react';
 import { EmptyState } from '@/components/common/EmptyState';
 
+/**
+ * Empty state view displayed when no breeds match the current filter or search criteria.
+ *
+ * @returns {React.JSX.Element} Configured EmptyState layout.
+ */
 export const GalleryEmpty: React.FC = () => {
   return (
     <EmptyState
@@ -10,3 +15,4 @@ export const GalleryEmpty: React.FC = () => {
     />
   );
 };
+

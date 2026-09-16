@@ -80,7 +80,7 @@ export const Header = () => {
               Gallery
             </NavLink>
             <NavLink
-              to="/books"
+              to={LINKS.books()}
               className={({ isActive }) =>
                 `${STYLES.navLinkBase} ${isActive
                   ? STYLES.navLinkActive
