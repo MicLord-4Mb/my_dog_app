@@ -1,8 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
-import favoritesReducer from "@/features/favorites/favoritesSlice";
 import { createLogger } from 'redux-logger'
-import booksReducer from "@/features/books/booksSlice";
 import breedReducer from "@/features/breeds/breedSlice";
+import favoritesReducer from "@/features/favorites/favoritesSlice";
+import booksReducer from "@/features/books/booksSlice";
+import userReducer from "@/features/auth/tokenSlice";
+import tokenReducer from "@/features/auth/tokenSlice";
 
 
 const logger = createLogger({
@@ -16,6 +18,8 @@ export const store = configureStore({
     breeds: breedReducer,
     favorites: favoritesReducer,
     books: booksReducer,
+    user: userReducer,
+    token: tokenReducer,
   },
   middleware: (getDefaultMiddleware) => {
     const middlewares = getDefaultMiddleware();
