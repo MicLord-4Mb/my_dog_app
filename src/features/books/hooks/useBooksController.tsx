@@ -87,10 +87,13 @@ export function useBooksController(): BooksControllerReturn {
   }, [query, mode]);
 
   const prevSearchRef = useRef<{ query: string; mode: SearchMode } | null>(null);
+  const activeRequestIdRef = useRef<{ abort: () => void } | null>(null);
 
   // Monitor query and mode changes to trigger thunk fetch
   useEffect(() => {
     if (!hasSearchCriteria) {
+      activeRequestIdRef.current?.abort();
+      activeRequestIdRef.current = null;
       prevSearchRef.current = null;
       return;
     }
@@ -100,8 +103,14 @@ export function useBooksController(): BooksControllerReturn {
       return;
     }
 
+    activeRequestIdRef.current?.abort();
+
     prevSearchRef.current = { query, mode };
-    dispatch(loadBooks({ query, mode }));
+    const request = dispatch(loadBooks({ query, mode }));
+    activeRequestIdRef.current = request;
+    return () => {
+      request.abort();
+    }
   }, [dispatch, query, mode, hasSearchCriteria]);
 
   // Autoselect first book in results if none or invalid book is selected
@@ -155,8 +164,10 @@ export function useBooksController(): BooksControllerReturn {
    * Resets the search form, clears Redux store, and wipes URL query params.
    */
   const handleReset = useCallback(() => {
-    setDraftQuery('');
+    activeRequestIdRef.current?.abort();
+    activeRequestIdRef.current = null;
     prevSearchRef.current = null;
+    setDraftQuery('');
     dispatch(resetBooks());
     setSearchParams({}, { replace: true });
   }, [dispatch, setSearchParams]);
