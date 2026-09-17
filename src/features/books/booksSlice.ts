@@ -18,6 +18,8 @@ export const booksAdapter = createEntityAdapter<Book, string>({
 export interface BooksState {
   /** Async request lifecycle state containing normalized entities */
   request: RequestState<EntityState<Book, string>>;
+  /** Identifier of the currently pending request */
+  currentRequestId: string | null;
 }
 
 /**
@@ -29,6 +31,7 @@ const initialState: BooksState = {
     data: null,
     error: null,
   },
+  currentRequestId: null,
 };
 
 /**
@@ -44,28 +47,40 @@ const booksSlice = createSlice({
     /**
      * Resets books slice state back to initial idle state.
      */
-    resetBooks: () => initialState,
+    resetBooks: (state) => {
+      state.request = initialState.request;
+      state.currentRequestId = null;
+    },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(loadBooks.pending, (state) => {
+      .addCase(loadBooks.pending, (state, action) => {
         state.request.status = REQUEST_STATUS.LOADING;
         state.request.error = null;
+        state.currentRequestId = action.meta.requestId;
       })
-      .addCase(loadBooks.fulfilled, (state, action: PayloadAction<Book[]>) => {
-        state.request.status = REQUEST_STATUS.SUCCESS;
-        state.request.data = booksAdapter.setAll(
-          booksAdapter.getInitialState(),
-          action.payload
-        );
-        state.request.error = null;
+      .addCase(loadBooks.fulfilled, (state, action) => {
+        if (state.currentRequestId === action.meta.requestId) {
+          state.request.status = REQUEST_STATUS.SUCCESS;
+          state.request.data = booksAdapter.setAll(
+            booksAdapter.getInitialState(),
+            action.payload
+          );
+          state.request.error = null;
+          state.currentRequestId = null;
+        }
       })
       .addCase(loadBooks.rejected, (state, action) => {
-        state.request.status = REQUEST_STATUS.ERROR;
-        state.request.data = null;
-        state.request.error = action.payload || {
-          message: action.error.message || 'Failed to load books.',
-        };
+        if (action.meta.aborted) return;
+
+        if (state.currentRequestId === action.meta.requestId) {
+          state.request.status = REQUEST_STATUS.ERROR;
+          state.request.data = null;
+          state.request.error = action.payload || {
+            message: action.error.message || 'Failed to load books.',
+          };
+          state.currentRequestId = null;
+        }
       });
   },
 });
