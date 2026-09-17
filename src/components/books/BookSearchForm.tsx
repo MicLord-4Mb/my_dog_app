@@ -1,5 +1,6 @@
 import type { SyntheticEvent } from 'react';
 import type { SearchMode } from '@/types/books.types';
+import { SEARCH_MODE } from '@/types/books.types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -165,9 +166,9 @@ export const BookSearchForm = ({
                   <SelectValue placeholder="Mode" />
                 </SelectTrigger>
                 <SelectContent className={STYLES.selectContent}>
-                  <SelectItem value="all">Any field</SelectItem>
-                  <SelectItem value="title">Title</SelectItem>
-                  <SelectItem value="author">Author</SelectItem>
+                  <SelectItem value={SEARCH_MODE.ALL}>Any field</SelectItem>
+                  <SelectItem value={SEARCH_MODE.TITLE}>Title</SelectItem>
+                  <SelectItem value={SEARCH_MODE.AUTHOR}>Author</SelectItem>
                 </SelectContent>
               </Select>
             </div>
