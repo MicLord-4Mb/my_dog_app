@@ -1,3 +1,5 @@
+import {loginRoute} from "@/routes/auth/login.route";
+import {profileRoute} from "@/routes/auth/profile.route";
 import type { RouteObject } from 'react-router';
 import { RootErrorBoundary } from '@/components/layout/RootErrorBoundary';
 import { booksRoute } from '@/routes/books/books.route';
@@ -28,6 +30,8 @@ export const rootRoute: RouteObject = {
     galleryRoute,
     booksRoute,
     favoritesRoute,
+    loginRoute,
+    profileRoute,
     notFoundRoute,
   ],
 };

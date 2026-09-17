@@ -1,3 +1,4 @@
+import {ProtectedRoute} from "@/components/auth/ProtectedRoute";
 import type { RouteObject } from 'react-router';
 import { Navigate } from 'react-router';
 import {LINKS, FAVORITES_GROUP_KEY} from '@/constants/routes';
@@ -8,5 +9,9 @@ import {LINKS, FAVORITES_GROUP_KEY} from '@/constants/routes';
  */
 export const favoritesRoute: RouteObject = {
   path: FAVORITES_GROUP_KEY,
-  element: <Navigate to={LINKS.favorites()} replace />,
+  element: (
+    <ProtectedRoute>
+      <Navigate to={LINKS.favorites()} replace />
+    </ProtectedRoute>
+  ),
 };

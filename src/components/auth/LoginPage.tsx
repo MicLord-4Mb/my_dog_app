@@ -22,7 +22,7 @@ const STYLES = {
   demoCredentialsBox: 'mt-6 pt-5 border-t border-secondary-fixed/20 text-xs text-secondary space-y-1.5 bg-surface-container-low/50 p-3.5 rounded-xl',
 };
 
-export const SignInPage: React.FC = () => {
+export const LoginPage: React.FC = () => {
   const { login, isLoading, error } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();

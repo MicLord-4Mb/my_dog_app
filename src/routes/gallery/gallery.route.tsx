@@ -1,3 +1,4 @@
+import {ProtectedRoute} from "@/components/auth/ProtectedRoute";
 import { GalleryLayout } from '@/components/gallery/views/GalleryLayout';
 import { ROUTES } from '@/constants/routes';
 import { GalleryErrorBoundary } from '@/routes/gallery/gallery.error';
@@ -26,7 +27,11 @@ export const galleryRoute: RouteObject = {
   id: ROUTES.GALLERY,
   loader: galleryLoader,
   errorElement: <GalleryErrorBoundary />,
-  element: <GalleryLayout />,
+  element: (
+    <ProtectedRoute>
+      <GalleryLayout />
+    </ProtectedRoute>
+  ),
   children: [
     {
       index: true,
