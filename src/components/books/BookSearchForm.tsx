@@ -88,7 +88,6 @@ const STYLES = {
  *
  * @param {BookSearchFormProps} props - Component properties.
  * @returns Rendered search form card.
- * @returns Rendered search form card.
  */
 export const BookSearchForm = ({
   query,
@@ -181,11 +180,11 @@ export const BookSearchForm = ({
                 <span>{isLoading ? 'Searching...' : 'Search'}</span>
               </Button>
               <Button type="button" variant="secondary" onClick={onReset} className={STYLES.resetBtn}>
-                  <span className={STYLES.resetIcon}>restart_alt</span>
-                  <span>Reset</span>
-                </Button>
-              </div>
+                <span className={STYLES.resetIcon}>restart_alt</span>
+                <span>Reset</span>
+              </Button>
             </div>
+          </div>
 
           {/* Bottom Status Row */}
           <div className={STYLES.statusRow}>
