@@ -1,5 +1,5 @@
-import {mapOpenLibraryBookDtoToDomain} from "@/api/mappers/libBook.mapper";
-import type {OpenLibrarySearchResponse} from "@/types/api.types";
+import { mapOpenLibraryBookDtoToDomain } from "@/api/mappers/libBook.mapper";
+import type { OpenLibrarySearchResponse } from "@/types/api.types";
 import axios from "axios";
 import {
   type Book,
@@ -7,6 +7,7 @@ import {
   SEARCH_MODE,
   type SearchMode,
 } from '@/types/books.types';
+import { API_ENDPOINTS } from "@/constants/api";
 
 /**
  * Pre-configured Axios instance for Open Library REST API requests.
@@ -47,19 +48,23 @@ function buildSearchParams(query: string, mode: SearchMode): Record<string, stri
  * Queries Open Library search endpoint and returns normalized domain `Book` models.
  *
  * @param {BooksSearchParams} params - Search query and filtering mode.
+ * @param {AbortSignal} signal - Signal to abort the request.
  * @returns {Promise<Book[]>} Array of mapped domain book entities.
  * @throws {Error} When query is empty or network request fails.
  */
-export async function searchBooks(params: BooksSearchParams): Promise<Book[]> {
+export async function searchBooks(
+  params: BooksSearchParams,
+  signal?: AbortSignal
+): Promise<Book[]> {
   const trQuery = params.query.trim();
   if (!trQuery) {
     throw new Error("no title or authors or keyword");
   }
 
-  const response = await bookApi.get<OpenLibrarySearchResponse>('/search.json', {
+  const response = await bookApi.get<OpenLibrarySearchResponse>(API_ENDPOINTS.BOOKS, {
     params: buildSearchParams(trQuery, params.mode),
+    signal,
   });
 
   return response.data.docs.map(mapOpenLibraryBookDtoToDomain);
 }
-
