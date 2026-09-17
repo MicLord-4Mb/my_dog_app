@@ -88,6 +88,7 @@ const STYLES = {
  *
  * @param {BookSearchFormProps} props - Component properties.
  * @returns Rendered search form card.
+ * @returns Rendered search form card.
  */
 export const BookSearchForm = ({
   query,
@@ -100,113 +101,114 @@ export const BookSearchForm = ({
   onReset,
 }: BookSearchFormProps) => {
   const handleSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    onSubmit();
-  };
+    const handleSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      onSubmit();
+    };
 
-  return (
-    <Card className={STYLES.card}>
-      <div className={STYLES.accentBar} />
+    return (
+      <Card className={STYLES.card}>
+        <div className={STYLES.accentBar} />
 
-      <CardHeader className={STYLES.cardHeader}>
-        <div className={STYLES.titleWrap}>
-          <span className={STYLES.titleIcon}>travel_explore</span>
-          <CardTitle className={STYLES.cardTitle}>Search Books</CardTitle>
-        </div>
-        <CardDescription className={STYLES.cardDescription}>
-          Find books by title, author, or keyword in the Open Library catalog
-        </CardDescription>
-      </CardHeader>
+        <CardHeader className={STYLES.cardHeader}>
+          <div className={STYLES.titleWrap}>
+            <span className={STYLES.titleIcon}>travel_explore</span>
+            <CardTitle className={STYLES.cardTitle}>Search Books</CardTitle>
+          </div>
+          <CardDescription className={STYLES.cardDescription}>
+            Find books by title, author, or keyword in the Open Library catalog
+          </CardDescription>
+        </CardHeader>
 
-      <CardContent className={STYLES.cardContent}>
-        <form className={STYLES.form} onSubmit={handleSubmit}>
-          <div className={STYLES.row}>
-            {/* Query Field */}
-            <div className={STYLES.fieldWrap}>
-              <label className={STYLES.label} htmlFor="book-search-input">
-                <span>Query</span>
-                <span className={STYLES.labelHint}>Supports title, author, ISBN</span>
-              </label>
-              <div className={STYLES.inputWrap}>
-                <span className={STYLES.inputIcon}>search</span>
-                <Input
-                  id="book-search-input"
-                  type="text"
-                  placeholder="Harry Potter, Tolkien, Alice..."
-                  value={query}
-                  onChange={(e) => onQueryChange(e.target.value)}
-                  className={STYLES.input}
-                />
-                {query && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className={STYLES.clearBtn}
-                    title="Clear input"
-                    aria-label="Clear input"
-                    onClick={() => onQueryChange('')}
-                  >
-                    <span className={STYLES.clearIcon}>close</span>
-                  </Button>
-                )}
+        <CardContent className={STYLES.cardContent}>
+          <form className={STYLES.form} onSubmit={handleSubmit}>
+            <div className={STYLES.row}>
+              {/* Query Field */}
+              <div className={STYLES.fieldWrap}>
+                <label className={STYLES.label} htmlFor="book-search-input">
+                  <span>Query</span>
+                  <span className={STYLES.labelHint}>Supports title, author, ISBN</span>
+                </label>
+                <div className={STYLES.inputWrap}>
+                  <span className={STYLES.inputIcon}>search</span>
+                  <Input
+                    id="book-search-input"
+                    type="text"
+                    placeholder="Harry Potter, Tolkien, Alice..."
+                    value={query}
+                    onChange={(e) => onQueryChange(e.target.value)}
+                    className={STYLES.input}
+                  />
+                  {query && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className={STYLES.clearBtn}
+                      title="Clear input"
+                      aria-label="Clear input"
+                      onClick={() => onQueryChange('')}
+                    >
+                      <span className={STYLES.clearIcon}>close</span>
+                    </Button>
+                  )}
+                </div>
+              </div>
+
+              {/* Mode Selector (shadcn Select) */}
+              <div className={STYLES.selectWrap}>
+                <label className={STYLES.selectLabel} htmlFor="book-search-mode">
+                  Mode
+                </label>
+                <Select
+                  value={mode}
+                  onValueChange={(val) => onModeChange(val as SearchMode)}
+                >
+                  <SelectTrigger id="book-search-mode" className={STYLES.selectTrigger}>
+                    <SelectValue placeholder="Mode" />
+                  </SelectTrigger>
+                  <SelectContent className={STYLES.selectContent}>
+                    <SelectItem value={SEARCH_MODE.ALL}>Any field</SelectItem>
+                    <SelectItem value={SEARCH_MODE.TITLE}>Title</SelectItem>
+                    <SelectItem value={SEARCH_MODE.AUTHOR}>Author</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Action Buttons */}
+              <div className={STYLES.actionsRow}>
+                <Button type="submit" disabled={isLoading} className={STYLES.submitBtn}>
+                  <span className={STYLES.submitIcon}>travel_explore</span>
+                  <span>{isLoading ? 'Searching...' : 'Search'}</span>
+                </Button>
+                <Button type="button" variant="secondary" onClick={onReset} className={STYLES.resetBtn}>
+                  <span className={STYLES.resetIcon}>restart_alt</span>
+                  <span>Reset</span>
+                </Button>
               </div>
             </div>
 
-            {/* Mode Selector (shadcn Select) */}
-            <div className={STYLES.selectWrap}>
-              <label className={STYLES.selectLabel} htmlFor="book-search-mode">
-                Mode
-              </label>
-              <Select
-                value={mode}
-                onValueChange={(val) => onModeChange(val as SearchMode)}
-              >
-                <SelectTrigger id="book-search-mode" className={STYLES.selectTrigger}>
-                  <SelectValue placeholder="Mode" />
-                </SelectTrigger>
-                <SelectContent className={STYLES.selectContent}>
-                  <SelectItem value={SEARCH_MODE.ALL}>Any field</SelectItem>
-                  <SelectItem value={SEARCH_MODE.TITLE}>Title</SelectItem>
-                  <SelectItem value={SEARCH_MODE.AUTHOR}>Author</SelectItem>
-                </SelectContent>
-              </Select>
+            {/* Bottom Status Row */}
+            <div className={STYLES.statusRow}>
+              <div className={STYLES.statusLeft}>
+                {resultsCount !== null && (
+                  <>
+                    <Badge variant="secondary" className={STYLES.statusBadge}>
+                      <span className={STYLES.statusBadgeIcon}>check_circle</span>
+                      Found {resultsCount} results
+                    </Badge>
+                    <span className={STYLES.statusDivider}>•</span>
+                  </>
+                )}
+                <span>Open Library API via Redux Dispatch</span>
+              </div>
+              <div className={STYLES.statusRight}>
+                <span className={STYLES.statusDot} />
+                <span>Live Catalog Sync</span>
+              </div>
             </div>
-
-            {/* Action Buttons */}
-            <div className={STYLES.actionsRow}>
-              <Button type="submit" disabled={isLoading} className={STYLES.submitBtn}>
-                <span className={STYLES.submitIcon}>travel_explore</span>
-                <span>{isLoading ? 'Searching...' : 'Search'}</span>
-              </Button>
-              <Button type="button" variant="secondary" onClick={onReset} className={STYLES.resetBtn}>
-                <span className={STYLES.resetIcon}>restart_alt</span>
-                <span>Reset</span>
-              </Button>
-            </div>
-          </div>
-
-          {/* Bottom Status Row */}
-          <div className={STYLES.statusRow}>
-            <div className={STYLES.statusLeft}>
-              {resultsCount !== null && (
-                <>
-                  <Badge variant="secondary" className={STYLES.statusBadge}>
-                    <span className={STYLES.statusBadgeIcon}>check_circle</span>
-                    Found {resultsCount} results
-                  </Badge>
-                  <span className={STYLES.statusDivider}>•</span>
-                </>
-              )}
-              <span>Open Library API via Redux Dispatch</span>
-            </div>
-            <div className={STYLES.statusRight}>
-              <span className={STYLES.statusDot} />
-              <span>Live Catalog Sync</span>
-            </div>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
-  );
-};
+          </form>
+        </CardContent>
+      </Card>
+    );
+  };
