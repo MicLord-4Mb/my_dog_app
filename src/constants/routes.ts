@@ -32,8 +32,8 @@ export const ROUTES = {
   GALLERY_BREED: `/${ROUTE_SEGMENTS.GALLERY}/${ROUTE_SEGMENTS.BREED}`,
   BOOKS: `/${ROUTE_SEGMENTS.BOOKS}`,
   SEARCH: `/${ROUTE_SEGMENTS.BOOKS}/${ROUTE_SEGMENTS.SEARCH}`,
-  LOGIN: `.${ ROUTE_SEGMENTS.LOGIN }`,
-  PROFILE: `.${ ROUTE_SEGMENTS.PROFILE }`,
+  LOGIN: `/${ROUTE_SEGMENTS.LOGIN}`,
+  PROFILE: `/${ROUTE_SEGMENTS.PROFILE}`,
 
   NOT_FOUND: '*',
 
@@ -51,6 +51,8 @@ export type RoutePattern =
   | typeof ROUTES.GALLERY_BREED
   | typeof ROUTES.BOOKS
   | typeof ROUTES.SEARCH
+  | typeof ROUTES.LOGIN
+  | typeof ROUTES.PROFILE
   | typeof ROUTES.NOT_FOUND;
 
 const getGroupQuery = (group?: string | null) => {

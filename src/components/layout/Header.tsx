@@ -1,3 +1,4 @@
+import {useAuth} from "@/features/auth/hooks/useAuth";
 import { NavLink, useLocation } from "react-router";
 import { LINKS, ROUTES, FAVORITES_GROUP_KEY } from "@/constants/routes";
 import { useAppSelector } from "@/store/hooks";
@@ -32,6 +33,7 @@ const STYLES = {
  * - User profile icon.
  */
 export const Header = () => {
+  const { user, isAuthenticated } = useAuth();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const isFavoritesActive = location.pathname.startsWith(ROUTES.GALLERY) && searchParams.get('group') === FAVORITES_GROUP_KEY;
@@ -121,12 +123,37 @@ export const Header = () => {
               {isGridMode ? 'Single View' : 'Explore Breeds'}
             </span>
           </NavLink>
-          <div
-            title="Dog Enthusiast"
-            className={STYLES.avatar}
-          >
-            <span className={STYLES.avatarIcon}>person</span>
-          </div>
+
+        {/*  <div*/}
+        {/*    title="Dog Enthusiast"*/}
+        {/*    className={STYLES.avatar}*/}
+        {/*  >*/}
+        {/*    <span className={STYLES.avatarIcon}>person</span>*/}
+        {/*  </div>*/}
+        {/*</div>*/}
+
+          {isAuthenticated && user ? (
+            <NavLink
+              to={LINKS.profile()}
+              title={`Profile (${user.firstName})`}
+              className="flex items-center gap-2 group"
+            >
+              <div className={STYLES.avatar}>
+                <span className={STYLES.avatarIcon}>person</span>
+              </div>
+              <span className="hidden lg:inline text-xs font-semibold text-on-surface group-hover:text-primary transition-colors" >
+                {user.firstName}
+              </span>
+             </NavLink>
+         ) : (
+           <NavLink
+             to={LINKS.login()}
+             className="inline-flex items-center gap-1.5 text-xs font-bold text-on-primary bg-primary hover:bg-primary/90 px-3.5 py-1.5 rounded-full transition-colors shadow-sm"
+           >
+             <span className="material-symbols-outlined text-[16px]">login</span>
+             <span>Sign In</span>
+           </NavLink>
+         )}
         </div>
       </div>
     </header>
