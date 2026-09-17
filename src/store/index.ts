@@ -3,7 +3,7 @@ import { createLogger } from 'redux-logger'
 import breedReducer from "@/features/breeds/breedSlice";
 import favoritesReducer from "@/features/favorites/favoritesSlice";
 import booksReducer from "@/features/books/booksSlice";
-import userReducer from "@/features/auth/tokenSlice";
+import userReducer from "@/features/auth/userSlice";
 import tokenReducer from "@/features/auth/tokenSlice";
 
 
