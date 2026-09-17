@@ -11,6 +11,8 @@ export const ROUTE_SEGMENTS = {
   BREED: 'breed/:id',
   BOOKS: 'books',
   SEARCH: 'search',
+  LOGIN: 'login',
+  PROFILE: 'profile',
 } as const;
 
 /**
@@ -30,6 +32,8 @@ export const ROUTES = {
   GALLERY_BREED: `/${ROUTE_SEGMENTS.GALLERY}/${ROUTE_SEGMENTS.BREED}`,
   BOOKS: `/${ROUTE_SEGMENTS.BOOKS}`,
   SEARCH: `/${ROUTE_SEGMENTS.BOOKS}/${ROUTE_SEGMENTS.SEARCH}`,
+  LOGIN: `.${ ROUTE_SEGMENTS.LOGIN }`,
+  PROFILE: `.${ ROUTE_SEGMENTS.PROFILE }`,
 
   NOT_FOUND: '*',
 
@@ -72,6 +76,10 @@ export const LINKS = {
 
   search: (query = '', mode: SearchMode = SEARCH_MODE.ALL, bookId?: string | null) =>
     buildBooksSearchUrl({ query, mode, bookId }),
+
+  login: () => ROUTES.LOGIN,
+
+  profile: () => ROUTES.PROFILE,
 } as const;
 
 export type AppUrl = ReturnType<(typeof LINKS)[keyof typeof LINKS]>;
