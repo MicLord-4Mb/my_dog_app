@@ -21,15 +21,20 @@ export const loadBooks = createAsyncThunk<
   { state: RootState; rejectValue: ApiError }
 >(
   'books/loadBooks',
-  async (params, { rejectWithValue }) => {
+  async (params, { rejectWithValue, signal }) => {
     const trQuery = params.query.trim();
     if (!trQuery) {
       return rejectWithValue({ message: 'please enter a valid query.' });
     }
 
     try {
-      return await searchBooks(params);
+      return await searchBooks(params, signal);
     } catch (e: unknown) {
+      if (axios.isCancel(e) || signal.aborted) {
+        console.warn(e, 'Request cancelled');
+        throw e;
+      }
+
       if (axios.isAxiosError(e)) {
         return rejectWithValue({
           message: e.response?.data?.message || e.message || 'Network error occurred',
@@ -43,12 +48,6 @@ export const loadBooks = createAsyncThunk<
 
       return rejectWithValue({ message: 'Failed to load books.' });
     }
-  },
-  {
-    condition: (_, { getState }) => {
-      const { request } = getState().books;
-      return request.status !== REQUEST_STATUS.LOADING;
-    },
   }
 );
 
