@@ -22,6 +22,7 @@ const STYLES = {
   logoutButton: 'inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-error/30 text-error hover:bg-error/10 font-semibold text-sm transition-colors',
 };
 
+// TODO: think about header link
 export const ProfilePage: React.FC = () => {
   const { user, logout } = useAuth();
   const favoritesCount = useAppSelector(selectFavoritesCount);
