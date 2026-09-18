@@ -20,6 +20,13 @@ const STYLES = {
   description: 'text-sm text-on-surface-variant max-w-xs leading-relaxed',
 };
 
+/**
+ * Reusable empty state component for displaying placeholder content when data is missing.
+ * Configurable with custom icon, title, description, and optional action buttons as children.
+ *
+ * @param props - Component configuration.
+ * @returns {React.FC} The empty state placeholder component.
+ */
 export const EmptyState: React.FC<EmptyStateProps> = ({
   icon = 'search_off',
   title,

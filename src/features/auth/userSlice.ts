@@ -13,6 +13,9 @@ const initialState: UserSliceState = {
     : { status: REQUEST_STATUS.IDLE, data: null, error: null }
 };
 
+/**
+ * Redux slice managing the authenticated user's details and login request state.
+ */
 const userSlice = createSlice({
   name: 'user',
   initialState,

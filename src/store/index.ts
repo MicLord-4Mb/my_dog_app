@@ -13,6 +13,10 @@ const logger = createLogger({
   diff: true,
 })
 
+/**
+ * Application Redux store configuration.
+ * Includes reducers for all feature slices and development logging middleware.
+ */
 export const store = configureStore({
   reducer: {
     breeds: breedReducer,
@@ -32,7 +36,14 @@ export const store = configureStore({
   }
 });
 
+/**
+ * Root state type representing the entire Redux store state tree.
+ */
 export type RootState = ReturnType<typeof store.getState>;
+
+/**
+ * AppDispatch type supporting both synchronous actions and asynchronous thunks.
+ */
 export type AppDispatch = typeof store.dispatch;
 
 /**

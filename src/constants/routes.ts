@@ -44,6 +44,9 @@ export const ROUTES = {
   },
 } as const;
 
+/**
+ * Union type of all valid absolute and wildcard route string patterns.
+ */
 export type RoutePattern =
   | typeof ROUTES.HOME
   | typeof ROUTES.GALLERY
@@ -55,11 +58,20 @@ export type RoutePattern =
   | typeof ROUTES.PROFILE
   | typeof ROUTES.NOT_FOUND;
 
+/**
+ * Helper to construct the query string for filtering by breed group.
+ * @param group Optional group name filter
+ * @returns Formatted query string or `?group=all` if empty
+ */
 const getGroupQuery = (group?: string | null) => {
   const targetGroup = group && group.trim() !== '' ? group.trim() : 'all';
   return `?group=${encodeURIComponent(targetGroup)}`;
 };
 
+/**
+ * URL Builder functions for navigating throughout the application.
+ * Centralized way to generate route strings, abstracting URL params/queries.
+ */
 export const LINKS = {
   home: () => ROUTES.HOME,
 
@@ -84,4 +96,7 @@ export const LINKS = {
   profile: () => ROUTES.PROFILE,
 } as const;
 
+/**
+ * Type representing any valid resolved URL string output by the LINKS object.
+ */
 export type AppUrl = ReturnType<(typeof LINKS)[keyof typeof LINKS]>;

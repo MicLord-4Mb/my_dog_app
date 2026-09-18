@@ -3,6 +3,10 @@ import type {ApiError} from "@/types/api.types";
 import type {LoginCredentials, LoginResponse} from "@/types/auth.types";
 import {createAsyncThunk} from "@reduxjs/toolkit";
 
+/**
+ * Asynchronous thunk to handle user login.
+ * Dispatches pending/fulfilled/rejected actions based on the API response.
+ */
 export const loginThunk = createAsyncThunk<
   LoginResponse,
   LoginCredentials,
@@ -18,6 +22,10 @@ export const loginThunk = createAsyncThunk<
     }
   });
 
+/**
+ * Asynchronous thunk to handle user logout.
+ * Clears stored session data and resets related state slices.
+ */
 export const logoutThunk = createAsyncThunk<void,void>(
   'auth/logout',
   async () => {

@@ -6,6 +6,10 @@ import type {DogBreed} from "@/types/breed.types";
 import {createAsyncThunk} from "@reduxjs/toolkit";
 import axios from "axios";
 
+/**
+ * Asynchronous thunk to fetch the complete list of dog breeds from the API.
+ * Uses a condition to prevent concurrent or duplicate fetching if data is already loaded or loading.
+ */
 export const fetchBreeds = createAsyncThunk<
   DogBreed[],
   void,

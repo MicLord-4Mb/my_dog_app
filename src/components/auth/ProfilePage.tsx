@@ -22,6 +22,13 @@ const STYLES = {
   logoutButton: 'inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-error/30 text-error hover:bg-error/10 font-semibold text-sm transition-colors',
 };
 
+/**
+ * Profile Page component displaying authenticated user's details and statistics.
+ * Allows the user to view their name, email, role, and favorites count,
+ * and provides a sign-out action.
+ * 
+ * @returns {React.FC} The profile page component.
+ */
 export const ProfilePage: React.FC = () => {
   const { user, logout } = useAuth();
   const favoritesCount = useAppSelector(selectFavoritesCount);

@@ -9,6 +9,13 @@ const STYLES = {
   ambientGlowTertiary: "absolute bottom-1/4 right-0 w-80 h-80 bg-tertiary-container/10 rounded-full blur-[80px]",
 }
 
+/**
+ * Base layout component for the Gallery feature section.
+ * Provides the ambient background decoration and wraps the child routes
+ * in a Suspense boundary for lazy loading.
+ *
+ * @returns {FC} The gallery layout wrapper component.
+ */
 export const GalleryLayout: FC = () => {
   return (
     <div className={STYLES.container}>

@@ -22,6 +22,13 @@ const STYLES = {
   demoCredentialsBox: 'mt-6 pt-5 border-t border-secondary-fixed/20 text-xs text-secondary space-y-1.5 bg-surface-container-low/50 p-3.5 rounded-xl',
 };
 
+/**
+ * Login Page component for user authentication.
+ * Provides a form to enter email and password. Shows validation errors
+ * and loading state. Redirects the user upon successful authentication.
+ * 
+ * @returns {React.FC} The login page component.
+ */
 export const LoginPage: React.FC = () => {
   const { login, isLoading, error } = useAuth();
   const navigate = useNavigate();

@@ -12,4 +12,7 @@ export const REQUEST_STATUS = {
   ERROR: 'error',
 } as const;
 
+/**
+ * Union type representing the possible states of an asynchronous request.
+ */
 export type RequestStatus = (typeof REQUEST_STATUS)[keyof typeof REQUEST_STATUS];

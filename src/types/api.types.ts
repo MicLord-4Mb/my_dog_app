@@ -10,7 +10,12 @@ export interface ApiError {
   code?: number;
 }
 
+/**
+ * Response structure for Open Library search API.
+ */
 export type OpenLibrarySearchResponse  = {
+  /** Total number of found items matching the search */
   numFound: number;
+  /** Array of book documents matching the search criteria */
   docs: OpenLibraryBookDto[];
 }

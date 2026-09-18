@@ -1,3 +1,4 @@
+import {REQUEST_STATUS} from "@/constants/status";
 import React from 'react';
 import { Header } from '@/components/layout/Header';
 import { BottomNav } from '@/components/layout/BottomNav';
@@ -24,7 +25,7 @@ const STYLES = {
  */
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const navigation = useNavigation();
-  const isNavigating = navigation.state !== 'idle';
+  const isNavigating = navigation.state !== REQUEST_STATUS.IDLE;
 
   return (
     <div className={STYLES.container}>

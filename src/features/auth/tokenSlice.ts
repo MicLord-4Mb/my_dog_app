@@ -9,6 +9,9 @@ const initialState: TokenSliceState = {
   token: storedAuthSession.token,
 };
 
+/**
+ * Redux slice managing the authentication token state.
+ */
 const tokenSlice = createSlice({
   name: 'token',
   initialState,

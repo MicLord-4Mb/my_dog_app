@@ -8,4 +8,7 @@ export const API_ENDPOINTS = {
   BOOKS: '/search.json',
 } as const;
 
+/**
+ * Union type of all valid external API endpoint paths.
+ */
 export type ApiEndpoint = (typeof API_ENDPOINTS)[keyof typeof API_ENDPOINTS];

@@ -15,6 +15,10 @@ export interface BreedsState {
   selectedBreedId: string | null;
 }
 
+/**
+ * Entity adapter for normalized DogBreed storage.
+ * Sorts breeds alphabetically by name.
+ */
 export const breedAdapter = createEntityAdapter<DogBreed, string>({
   selectId: (breed) => breed.id,
   sortComparer: (a, b) => a.name.localeCompare(b.name),
@@ -32,6 +36,11 @@ const initialState: BreedsState = {
   selectedBreedId: null,
 };
 
+/**
+ * Redux Toolkit slice managing the breeds data.
+ * Handles the asynchronous request lifecycle, normalization via `breedAdapter`,
+ * and active breed selection logic.
+ */
 const breedSlice = createSlice({
   name: 'breeds',
   initialState,

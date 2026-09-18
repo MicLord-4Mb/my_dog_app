@@ -3,6 +3,14 @@ import type {AuthUser, LoginCredentials, LoginResponse} from "@/types/auth.types
 const MOCK_STORAGE_KEY_TOKEN = 'dog_app_auth_token';
 const MOCK_STORAGE_KEY_USER = 'dog_app_auth_user';
 
+/**
+ * Simulates an API call to authenticate a user.
+ * It uses a hardcoded mock delay and stores a mock token in local storage.
+ *
+ * @param {LoginCredentials} credentials - The email and password to authenticate.
+ * @returns {Promise<LoginResponse>} A promise that resolves to the login response.
+ * @throws {Error} If validation fails or mock error conditions are met.
+ */
 export async function loginUserApi(credentials: LoginCredentials): Promise<LoginResponse> {
   await new Promise(resolve => setTimeout(resolve, 1000));
 
@@ -35,17 +43,19 @@ export async function loginUserApi(credentials: LoginCredentials): Promise<Login
     localStorage.setItem(MOCK_STORAGE_KEY_TOKEN, mockToken);
     localStorage.setItem(MOCK_STORAGE_KEY_USER, JSON.stringify(mockUser));
   } catch {
-    // fallback
+    // fallback if localStorage is disabled
   }
 
   return {
     token: mockToken,
     user: mockUser,
   }
-};
+}
 
 /**
- * Some cache for session
+ * Retrieves the currently stored authentication session from local storage.
+ *
+ * @returns An object containing the token and user if available, otherwise null values.
  */
 export function getStoredAuthSession(): {  token: string | null, user: AuthUser | null } {
   try {
@@ -58,11 +68,14 @@ export function getStoredAuthSession(): {  token: string | null, user: AuthUser 
   }
 }
 
+/**
+ * Clears the stored authentication session from local storage.
+ */
 export function clearStoredAuthSession(): void {
   try {
     localStorage.removeItem(MOCK_STORAGE_KEY_TOKEN);
     localStorage.removeItem(MOCK_STORAGE_KEY_USER);
   } catch {
-    // Ignore for now
+    // Ignore error if localStorage is inaccessible
   }
 }
